@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import {IDiamondLoupe} from "hardhat-deploy/solc_0.8/diamond/interfaces/IDiamondLoupe.sol";
 import {UsingDiamondOwner, IDiamondCut} from "hardhat-deploy/solc_0.8/diamond/UsingDiamondOwner.sol";
 import "hardhat-deploy/solc_0.8/diamond/libraries/LibDiamond.sol";
 import {SusuwatariStorage, StorageHandler} from "./SusuwatariStorage.sol";
+import "./ILeafWalletRegistryActivate.sol";
+
 
 contract InitFacet is UsingDiamondOwner, StorageHandler {
   
@@ -23,6 +25,8 @@ contract InitFacet is UsingDiamondOwner, StorageHandler {
         ds().supportedInterfaces[type(IDiamondCut).interfaceId] = true;
         ds().supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
         
+        ds().supportedInterfaces[type(ILeafWalletRegistryActivate).interfaceId] = true;
+
         susu.isInitialized = true;
     }
 }

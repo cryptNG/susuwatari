@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.18;
 
 import {LibDiamond} from "hardhat-deploy/solc_0.8/diamond/libraries/LibDiamond.sol";
 
@@ -16,6 +16,12 @@ struct SusuwatariStorage {
     
 
   bool isInitialized;
+}
+
+struct LeafWalletStorage {
+    mapping(address => address) _deviceOwner;
+    mapping(address => address[]) _ownerDevices;
+    mapping(address => uint256) _deviceActivationCodes;
 }
 
 contract StorageHandler {
@@ -35,5 +41,13 @@ contract StorageHandler {
     
     function ds() internal pure returns (LibDiamond.DiamondStorage storage) {
         return LibDiamond.diamondStorage();
+    }
+
+    
+    function lw() internal pure returns (LeafWalletStorage storage cs) {
+        bytes32 position = keccak256("leafwallet.contract.storage");
+        assembly {
+           cs.slot := position
+        }
     }
 }
