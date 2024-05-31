@@ -5,6 +5,7 @@ function timeout(ms) {
 let LibwalletMobileService = {
     isReady: false,
     isRegistered: false,
+    curretnState: {},
     oldMessage: '',
     lastMessage: '',
     balance: 0,
@@ -13,13 +14,20 @@ let LibwalletMobileService = {
     connectedWallet: null,
     contractAddress: '',
     contractAbi: '',
+    jsonRpcUrl: '',
+    chainId: null,
+    
   
     setup(contractAddress, jsonRpcUrl, contractAbi) {
       this.contractAddress = contractAddress;
       this.contractAbi = contractAbi;
       try {
         // Set up provider
-        this.provider = new window.ethers.providers.JsonRpcProvider(jsonRpcUrl);
+        if (!window.ethers) {
+          throw new Error("Ethers library is not loaded");
+        }
+
+        this.provider = new window.ethers.JsonRpcProvider(jsonRpcUrl);
   
         // Set up contract
         this.isReady = true;
@@ -29,23 +37,73 @@ let LibwalletMobileService = {
       }
     },
   
+    get isNewSusu() {
+      return this.currentState.slot.ownerAddress === this.connectedWallet.address;
+    },
+
+    get adress() {
+      return this.connectedWallet.address;
+    },
     async checkWalletRegistered() {
-      let debounce = 1;
-      while (!this.isRegistered) {
+      let hasChecked = false;      
+      while (!hasChecked) {
         if (this.connectedWallet !== null) {
           try {
             // Call the contract function
             this.isRegistered = await this.contract.isSenderRegistered({ from: this.connectedWallet.address });
-            if (!this.isRegistered) await timeout(2000 + debounce);
-            debounce += debounce;
+            hasChecked = true;
           } catch (e) {
             await timeout(2000 + debounce);
           }
         } else await timeout(100);
       }
-      this.lastMessage = "dApp Wallet registered";
+      this.lastMessage = "Wallet register checked";
+      return this.isRegistered;
     },
   
+  async registerWallet() {
+    let txResponse = null;
+    let pubKey = this.connectedWallet.signingKey.publicKey;
+        let address = window.ethers.computeAddress(pubKey);
+        let tx = await this.contract.assignActivatableAddressToSender(address);
+        await tx.wait();
+        console.log('tx:'+ await tx.wait());
+        txResponse = tx;
+        this.isRegistered = true;
+    return txResponse;
+},
+
+async getCurrentState() {
+  let hasChecked = false; 
+  console.log('getCurrentState');     
+      while (!hasChecked) {
+        if (this.connectedWallet !== null) {
+          try {
+            // Call the contract function
+
+            //this.currentState = await this.contract.getCurrentState({ from: this.connectedWallet.address });
+            this.currentState = {
+              ownedTokes:[
+                1
+              ],
+              slot:{
+                 susuTokenId:120,
+                 dropCooldownTime: new Date(Date.now() + 5 * 60000).getTime(),
+                 ownerAddress:this.connectedWallet.address,
+              }
+           };
+            hasChecked = true;
+          } catch (e) {
+            console.log('getCurrentState error:' + e)
+            await timeout(2000);
+          }
+        } else await timeout(100);
+      }
+      this.lastMessage = "Wallet state checked";
+      return this.currentState;
+    },
+
+
     async checkData() {
       let debounce = 1;
       while (true) {
@@ -83,7 +141,7 @@ let LibwalletMobileService = {
   
     async loadWallet() {
       // Check if the wallet exists in IndexedDB
-      const dbRequest = indexedDB.open('LibWalletDB', 2);
+      const dbRequest = indexedDB.open('LibWalletDB');
       return new Promise((resolve, reject) => {
         dbRequest.onsuccess = (event) => {
           const db = event.target.result;
@@ -105,7 +163,7 @@ let LibwalletMobileService = {
             } else {
               resolve(null);
             }
-          };
+          };          
           getRequest.onerror = function (event) {
             reject(new Error('Failed to retrieve wallet from database.'));
           };
@@ -116,9 +174,12 @@ let LibwalletMobileService = {
       });
     },
   
+    async getNftData(tokenID) {
+      return this.contract.getSusstate( tokenID, { from: this.connectedWallet.address });
+    },
     async saveWallet(walletJson) {
       // Save the wallet in IndexedDB
-      const dbRequest = indexedDB.open('LibWalletDB', 2);
+      const dbRequest = indexedDB.open('LibWalletDB');
       return new Promise((resolve, reject) => {
         dbRequest.onupgradeneeded = function (event) {
           const db = event.target.result;
@@ -145,10 +206,20 @@ let LibwalletMobileService = {
     },
   
     async checkWalletExists() {
-      const dbRequest = indexedDB.open('LibWalletDB', 2);
+      const dbRequest = indexedDB.open('LibWalletDB');
       return new Promise((resolve, reject) => {
+        dbRequest.onupgradeneeded = (event) => {
+          // Save the IDBDatabase interface
+          const db = event.target.result;
+        
+          // Create an objectStore for this database
+          if (!db.objectStoreNames.contains('wallets')) {
+            db.createObjectStore('wallets');
+          }
+        };
         dbRequest.onsuccess = function (event) {
           const db = event.target.result;
+          
           const transaction = db.transaction(['wallets'], 'readonly');
           const objectStore = transaction.objectStore('wallets');
           const getRequest = objectStore.get('deviceWallet');
@@ -178,7 +249,7 @@ let LibwalletMobileService = {
     deviceWalletBalance: 0,
   
     async getBalance() {
-      return this.deviceWalletBalance = await this.provider.getBalance(this.connectedWallet.address) / 1000000000000000000;
+      return this.deviceWalletBalance = await this.provider.getBalance(this.connectedWallet.address) / BigInt(10 ** 18);
     },
   
     async assignData(message) {
