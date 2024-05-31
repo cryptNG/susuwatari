@@ -1,0 +1,72 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "LibDiamond",
+  "sourceName": "hardhat-deploy/solc_0.8/diamond/libraries/LibDiamond.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "facetAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "enum IDiamondCut.FacetCutAction",
+              "name": "action",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes4[]",
+              "name": "functionSelectors",
+              "type": "bytes4[]"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct IDiamondCut.FacetCut[]",
+          "name": "_diamondCut",
+          "type": "tuple[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_init",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "_calldata",
+          "type": "bytes"
+        }
+      ],
+      "name": "DiamondCut",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    }
+  ],
+  "bytecode": "0x60808060405234601757604d9081601e823930815050f35b50600080fdfe6080604052600080fdfea3646970667358221220805a8912a3eb00fe5239b194fbfb37d584359f7d4d466623f343a9543d58314e6c6578706572696d656e74616cf564736f6c634300080a0041",
+  "deployedBytecode": "0x6080604052600080fdfea3646970667358221220805a8912a3eb00fe5239b194fbfb37d584359f7d4d466623f343a9543d58314e6c6578706572696d656e74616cf564736f6c634300080a0041",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
