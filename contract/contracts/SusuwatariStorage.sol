@@ -12,11 +12,6 @@ struct OwnableStorage {
     address _owner;
 }
 
-struct SusuwatariStorage {
-    
-
-  bool isInitialized;
-}
 
 struct LeafWalletStorage {
     mapping(address => address) _deviceOwner;
@@ -24,7 +19,31 @@ struct LeafWalletStorage {
     mapping(address => uint256) _deviceActivationCodes;
 }
 
+
+    struct Susu {
+        uint256 tokenId;
+        string originLocation;
+        string currentLocation;
+        string destination;
+        string message;
+        address carrier;
+        uint256 dropCooldownTime;
+    }
+    
+    //slotstate contains: 1. slot array, an element of slotarray has: [susutokenid, dropCooldownTime] 2. maxSlotCount(int) 3.  list of owned susus (nft)
+    struct SusuwatariStorage {
+        mapping(address => uint256) maxSlotCount;
+        address[] susuOwners;
+        mapping(uint256 => Susu) tokenIdToSusu;
+        bool isInitialized;
+        mapping(uint256 => address) baggedSusus; 
+    }
+
+
+
+
 contract StorageHandler {
+    
     function susu() internal pure returns (SusuwatariStorage storage cs) {
         bytes32 position = SUSUWATARI_STORAGE_POSITION;
         assembly {
