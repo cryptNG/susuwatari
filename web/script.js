@@ -1,6 +1,13 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async ()=> {
     const createWalletBtn = document.getElementById('createWalletBtn');
     const loadWalletBtn = document.getElementById('loadWalletBtn');
+
+    LibwalletMobileService.setup();
+
+    while(!LibwalletMobileService.isReady){
+        await timeout(100)
+        console.log('Waiting for LibwalletMobileService to be ready...')
+    }
   
     createWalletBtn.addEventListener('click', async () => {
       try {

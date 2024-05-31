@@ -4,17 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wallet App</title>
+  <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
+  <div class="loader" id="loader"></div>
   <button id="createWalletBtn">Create Wallet</button>
   <button id="loadWalletBtn">Load Wallet</button>
+  <button id="setReadyBtn">Set Ready</button>
   <script src="libwallet.js"></script>
   <script src="script.js"></script>
   <script type="module">
     import { ethers } from "./ethers.min.js";
     window.ethers = ethers;
-</script>  <script>
-    setup()
   </script>
 </body>
 </html>

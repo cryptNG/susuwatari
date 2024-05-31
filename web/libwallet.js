@@ -1,3 +1,7 @@
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 let LibwalletMobileService = {
     isReady: false,
     isRegistered: false,
@@ -196,4 +200,6 @@ let LibwalletMobileService = {
       return success;
     }
   };
+
+  window.LibwalletMobileService = LibwalletMobileService;
   
