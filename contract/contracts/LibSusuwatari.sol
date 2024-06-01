@@ -280,10 +280,10 @@ function tryPickupSusu(
 {
     Susu storage susu = sus.tokenIdToSusu[tokenId];
 
-    require(
-        susu.currentLocation == location,
-        "Caller is not in the correct location"
-    );
+    // require(
+    //     susu.currentLocation == location,
+    //     "Caller is not in the correct location"
+    // );
 
     susu.dropCooldownTime =
         300 +
