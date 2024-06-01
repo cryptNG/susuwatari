@@ -66,6 +66,14 @@ button {
 
 
 .gameMessages {
+    width: 100dvw;
+    font-family: system-ui;
+    font-weight: 300;
+    font-size: 2em;
+    display: inline-block;
+}
+
+.locationMessages {
     width: 50dvw;
     font-family: system-ui;
     font-weight: 300;
@@ -169,4 +177,64 @@ button {
 .newSusu {
     transform: scale(0.00);
 
+}
+
+@keyframes moveUp {
+    0% {
+        top: 30dvh;
+    }
+    100% {
+        top: 0;
+        height: 20dvh;
+    }
+}
+
+@keyframes moveUpText {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-300px);
+    }
+}
+
+@keyframes scaledown {
+    0% {
+        width: 150px;
+        height: 150px
+    }
+
+    100% {
+        width: 75px;
+        height: 75px;
+    }
+}
+
+@keyframes scaledownText {
+    0% {
+        font-size: 3em;
+    }
+
+    100% {
+       font-size: 1.2em;
+    }
+}
+
+.flip-card.active .newSusu.move-up svg{
+    animation: scaledown 2s forwards;
+}
+
+.flip-card.active .gameMessages.move-up {
+    animation: scaledownText 2s forwards;
+}   
+
+.svgTextWrapper {
+    height: 30dvh;
+    top: calc(45dvh - 15dvh);
+    position: relative;
+}
+
+.flip-card.active .svgTextWrapper {
+animation: moveUp 2s forwards;
+animation-delay: 4.5s;
 }
