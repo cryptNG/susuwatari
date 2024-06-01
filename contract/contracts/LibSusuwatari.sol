@@ -205,47 +205,50 @@ returns (uint256, string memory, address,uint8)
     }
 
     function aimInitialSusu(
-        SusuwatariStorage storage sus,
-        uint256 tokenId,
-        uint64 location,
-        uint64 destination,
-        string memory message
-    )
-        internal
-        isUserRegistered(sus)
-        mustExistSusu(sus, tokenId)
-        susuMustNotHaveBeenAimed(sus, tokenId)
-        returns (uint256, uint64, uint64, string memory)
-    {
-        Susu storage susu = sus.tokenIdToSusu[tokenId];
+    SusuwatariStorage storage sus,
+    uint256 tokenId,
+    uint256 location,
+    uint256 destination,
+    string memory message
+)
+    internal
+    isUserRegistered(sus)
+    mustExistSusu(sus, tokenId)
+    susuMustNotHaveBeenAimed(sus, tokenId)
+    returns (uint256, uint256, uint256, string memory, uint8)
+{
+    Susu storage susu = sus.tokenIdToSusu[tokenId];
 
-        susu.dropCooldownTime =
-            300 +
-            (uint256(
-                keccak256(
-                    abi.encodePacked(block.timestamp, msg.sender, tokenId)
-                )
-            ) % 301);
-        susu.originLocation = location;
-        susu.currentLocation = location;
-        susu.destination = destination;
-        susu.message = message;
-        susu.carrier = address(0);
-        sus.baggedSusus[tokenId] = address(0);
-        sus.tokenIdToSusu[tokenId] = susu;
-        return (tokenId, location, destination, message);
-    }
+    susu.dropCooldownTime =
+        300 +
+        (uint256(
+            keccak256(
+                abi.encodePacked(block.timestamp, msg.sender, tokenId)
+            )
+        ) % 301);
+    susu.originLocation = location;
+    susu.currentLocation = location;
+    susu.destination = destination;
+    susu.message = message;
+    susu.carrier = address(0);
+    sus.baggedSusus[tokenId] = address(0);
+    sus.tokenIdToSusu[tokenId] = susu;
+    
+    uint8 team = sus.ownerToTeam[msg.sender];
+    return (tokenId, location, destination, message, team);
+}
+
 
     function dropSusu(
         SusuwatariStorage storage sus,
         uint256 tokenId,
-        uint64 location
+        uint256 location
     )
         internal
         isUserRegistered(sus)
         mustExistSusu(sus, tokenId)
         mustCarrySusu(sus, tokenId)
-        returns (uint64, uint64, uint64, uint256, uint8)
+        returns (uint256, uint256, uint256, uint256, uint8, string memory)
     {
         Susu storage susu = sus.tokenIdToSusu[tokenId];
 
@@ -258,14 +261,14 @@ returns (uint256, string memory, address,uint8)
        
 
 
-        return (susu.originLocation, susu.currentLocation, susu.destination, tokenId,sus.ownerToTeam[msg.sender]);
+        return (susu.originLocation, susu.currentLocation, susu.destination, tokenId,sus.ownerToTeam[msg.sender], susu.message);
    
     }
 
 function tryPickupSusu(
     SusuwatariStorage storage sus,
     uint256 tokenId, //auto-ermitteln
-    uint64 location
+    uint256 location
 )
     internal
     isUserRegistered(sus)
@@ -273,7 +276,7 @@ function tryPickupSusu(
     mustNotCarrySusu(sus)
     isNotBeingCarriedSusu(sus, tokenId)
     cannotBeOwner(sus, tokenId)
-    returns (uint256, uint64, string memory, address, address, uint8)
+    returns (uint256, uint256, string memory, address, address, uint8)
 {
     Susu storage susu = sus.tokenIdToSusu[tokenId];
 
@@ -293,10 +296,11 @@ function tryPickupSusu(
     sus.baggedSusus[tokenId] = msg.sender;
     sus.tokenIdToSusu[tokenId] = susu;
 
-    uint8 team = sus.ownerToTeam[sus.susuOwners[tokenId]];
+    address susOwner = sus.susuOwners[tokenId-1];
+    uint8 team = sus.ownerToTeam[susOwner];
 
 
-        return (tokenId, location, susu.message, msg.sender, sus.susuOwners[tokenId], team);
+        return (tokenId, location, susu.message, msg.sender, susOwner, team);
    
 }
 

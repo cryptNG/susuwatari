@@ -75,14 +75,14 @@ export declare namespace LibSusuwatari {
 
 export interface SusuwatariFacetInterface extends utils.Interface {
   functions: {
-    "aimInitialSusu(uint256,uint64,uint64,string)": FunctionFragment;
-    "dropSusu(uint256,uint64)": FunctionFragment;
+    "aimInitialSusu(uint256,uint256,uint256,string)": FunctionFragment;
+    "dropSusu(uint256,uint256)": FunctionFragment;
     "getAllSusuwataris()": FunctionFragment;
     "getBaggedSusus()": FunctionFragment;
     "getCurrentState()": FunctionFragment;
     "giveSusuwatari()": FunctionFragment;
     "registerMe(uint8)": FunctionFragment;
-    "tryPickupSusu(uint256,uint64)": FunctionFragment;
+    "tryPickupSusu(uint256,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -163,9 +163,9 @@ export interface SusuwatariFacetInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "DroppedSusu(uint64,uint64,uint64,uint256,uint256)": EventFragment;
+    "DroppedSusu(uint256,uint256,uint256,uint256,uint8,string)": EventFragment;
     "MintedSusu(uint256,string,address,uint8)": EventFragment;
-    "PickedUpSusu(uint256,uint64,string,address,address,uint8)": EventFragment;
+    "PickedUpSusu(uint256,uint256,string,address,address,uint8)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DroppedSusu"): EventFragment;
@@ -178,10 +178,11 @@ export interface DroppedSusuEventObject {
   currentLocation: BigNumber;
   destination: BigNumber;
   tokenId: BigNumber;
-  team: BigNumber;
+  team: number;
+  message: string;
 }
 export type DroppedSusuEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+  [BigNumber, BigNumber, BigNumber, BigNumber, number, string],
   DroppedSusuEventObject
 >;
 
@@ -330,7 +331,7 @@ export interface SusuwatariFacet extends BaseContract {
       destination: PromiseOrValue<BigNumberish>,
       message: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber, BigNumber, string]>;
+    ): Promise<void>;
 
     dropSusu(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -363,19 +364,21 @@ export interface SusuwatariFacet extends BaseContract {
   };
 
   filters: {
-    "DroppedSusu(uint64,uint64,uint64,uint256,uint256)"(
+    "DroppedSusu(uint256,uint256,uint256,uint256,uint8,string)"(
       originLocation?: null,
       currentLocation?: null,
       destination?: null,
       tokenId?: null,
-      team?: null
+      team?: null,
+      message?: null
     ): DroppedSusuEventFilter;
     DroppedSusu(
       originLocation?: null,
       currentLocation?: null,
       destination?: null,
       tokenId?: null,
-      team?: null
+      team?: null,
+      message?: null
     ): DroppedSusuEventFilter;
 
     "MintedSusu(uint256,string,address,uint8)"(
@@ -391,7 +394,7 @@ export interface SusuwatariFacet extends BaseContract {
       team?: null
     ): MintedSusuEventFilter;
 
-    "PickedUpSusu(uint256,uint64,string,address,address,uint8)"(
+    "PickedUpSusu(uint256,uint256,string,address,address,uint8)"(
       tokenId?: null,
       location?: null,
       message?: null,
