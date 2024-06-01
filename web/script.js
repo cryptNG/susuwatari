@@ -1,15 +1,31 @@
 document.addEventListener("DOMContentLoaded", async ()=> {
     const messagesDiv = document.getElementById('messages');
     const messagesGameDiv = document.getElementById('gameMessages');
-    const messagesNewUserDiv = document.getElementById('gameMessages');
+    const messagesChooseLocationDiv = document.getElementById('locationMessages');
 
   
     function displayMessage(message) {
       messagesDiv.textContent = message;
     }
 
-    function displayGameMessage(message) {
-      messagesGameDiv.textContent = message;
+    async function displayGameMessage(message) {
+      const currentMessage = messagesGameDiv.textContent;
+      for (let i = currentMessage.length; i >= 0; i--) {
+          messagesGameDiv.textContent = currentMessage.substring(0, i);
+          await new Promise(resolve => setTimeout(resolve, 30)); 
+      }
+
+      // Type new message one letter at a time
+      for (let i = 0; i <= message.length; i++) {
+          messagesGameDiv.textContent = message.substring(0, i);
+          await new Promise(resolve => setTimeout(resolve, 30));
+      }
+  }
+
+
+
+    function displayChooseLocation(message) {
+      messagesChooseLocationDiv.textContent = message;
     }
 
     async function setLoaderComplete() {
@@ -18,7 +34,18 @@ document.addEventListener("DOMContentLoaded", async ()=> {
       displayMessage('Welcome!');
       await timeout(2000);
       document.querySelector('.flip-card').classList.add('active');
-    }
+  }
+
+  function moveGameMessage() {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            document.querySelector('.newSusu').classList.add('move-up');
+            document.querySelector('.gameMessages').classList.add('move-up');
+            document.querySelector('.gameMessagesWrapper').classList.add('move-up');
+            resolve();
+        }, 4500);
+    });
+}
   
 
     const contractAddress = '0xbc62d21a50930b689cd56b31A82d2c882105F04c';
@@ -124,13 +151,12 @@ document.addEventListener("DOMContentLoaded", async ()=> {
     displayMessage('Checking wallet registry...');
     if (!await LibwalletMobileService.checkWalletRegistered()) {
       displayMessage('Registering wallet...');
-      displayNewUserMessage("Welcome to Susuwatari! Please choose a Team!");
-
       await LibwalletMobileService.registerWallet();
     }
     displayMessage('Wallet registration complete!');
 
     setLoaderComplete();
+    //displayChooseLocation("Please choose where to drop your Susuwari");
 
     await LibwalletMobileService.getCurrentState();
     console.log('Current State:', LibwalletMobileService.currentState);
@@ -141,7 +167,14 @@ document.addEventListener("DOMContentLoaded", async ()=> {
       let hexSeed = uniqueIconSeed.toString(16);
       const iconGenerator = new Icon(hexSeed, document.querySelector('.newSusu svg'));
       iconGenerator.generateIcon();
-      displayGameMessage("You've found a new Susuwatari! You can now choose it's destination.");
-
     }
+    await displayGameMessage("You've found a new Susuwatari!");
+    await timeout(1500);
+    await moveGameMessage();
+    await timeout(2500);
+    initMap();
+    panToUserLocation();
+    await displayGameMessage("Please choose its destination!");
+
+
 });

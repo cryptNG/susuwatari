@@ -5,6 +5,7 @@ function timeout(ms) {
 let LibwalletMobileService = {
     isReady: false,
     isRegistered: false,
+    isNewUser: false,
     curretnState: {},
     oldMessage: '',
     lastMessage: '',
@@ -70,6 +71,7 @@ let LibwalletMobileService = {
         console.log('tx:'+ await tx.wait());
         txResponse = tx;
         this.isRegistered = true;
+        this.isNewUser = true;
     return txResponse;
 },
 
