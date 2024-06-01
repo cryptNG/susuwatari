@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
 }, false);
 
-document.querySelector('.dropButton').addEventListener('click', async () => {
+document.querySelector('.aim-button').addEventListener('click', async () => {
   try {
     const tokenId = LibwalletMobileService.currentState.slot.susuTokenId;
 
@@ -30,6 +30,7 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
     console.log("Test" + userLatLng, center);
     console.log("aiming susu");
     const tx = await LibwalletMobileService.aimInitialSusu(tokenId, location, destination, message);
+    window.changeState++;
     console.log("POW susu shot");
   } catch (err) {
     console.log("Susu missed...");
@@ -797,6 +798,7 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
     //displayChooseLocation("Please choose where to drop your Susuwari");
     window.refresh=true;
     window.changeState=0;
+    window.dontPan=false;
     async function loadGame(){
       let lastChangeState = -1;
       while(window.refresh===true){
@@ -816,7 +818,7 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
     console.log('Current State:', LibwalletMobileService.currentState);
 
     updatePositionPeriodically();
-    
+
     if(LibwalletMobileService.isNewSusu) {
       document.querySelector('#game-pane').classList.add('drop-susu');
       const BigIntAddress = BigInt(LibwalletMobileService.address);
@@ -830,10 +832,11 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
       await timeout(2500);
      
       await displayGameMessage("Please choose its destination!");
-      document.querySelector('.dropButton').style.display = 'block';
+      document.querySelector('.aim-button').style.display = 'block';
       
 
       map.on('move', async () => {
+        window.dontPan=true;
         try {
           const { points } = await selectedPosition();
           deleteAndType = false; // Switch to normal text displayer
@@ -852,8 +855,12 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
       console.log("statenew")
       await timeout(1500);
       await moveGameMessage();
-      await displayGameMessage("Current Points;");
+      await displayGameMessage("You are carrying a Susuwatari. Yay!!!");
+      await timeout(1000);
+      await moveGameMessage();
+      await displayGameMessage("Bring it nearer to it's destination to earn Fame Coins.");
       
+      updateDropPosition();
     }
 
     if(LibwalletMobileService.isPickingSusu){
@@ -940,6 +947,17 @@ async function tryPickSusu(){
       }
       
     }
+    await timeout(100);
+  }
+}
+async function updateDropPosition(){
+  updatePositionEvent(LeaderBoard.susus);
+  while(window.refresh && LibwalletMobileService.isCarryingSusu){
+    panToUserLocation();
+    
+    const susus = LeaderBoard.susus;
+    susus.find((susu)=>susu.tokenId===LibwalletMobileService.currentState.slot.susuTokenId).posCurrent={lat:userPosition[0],lon:userPosition[1]};
+    updateCachePositions(susus);
     await timeout(100);
   }
 }

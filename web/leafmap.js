@@ -25,7 +25,11 @@ const initMap = () => {
         maxZoom: 19
     }).addTo(map);
 
-    
+    map.whenReady(() => {
+      setTimeout(() => {
+          map.invalidateSize();
+      }, 0);
+  });
 };
 
 const panToUserLocation = () => {
@@ -48,7 +52,7 @@ const updatePositionPeriodically = async () => {
               navigator.geolocation.getCurrentPosition((position) => {
                   userPosition = [position.coords.latitude, position.coords.longitude];
                   userSpotId=getSpotIdForCoordinates({lat:userPosition[0],lon:userPosition[1]});
-                  //map.panTo(userLatLng);
+                  map.panTo(userPosition);
 
               });
           }
@@ -188,7 +192,7 @@ function updateCachePositions(susus,callback) {
 
   susus.forEach(susu => {
 
-    const position = map.latLngToLayerPoint([susu.posCurrent.lat, susu.posCurrent.lon]);
+    const position = map.latLngToContainerPoint([susu.posCurrent.lat, susu.posCurrent.lon]);
     const div = document.getElementById(susu.tokenId);
     
     if (div) {

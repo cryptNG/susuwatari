@@ -122,7 +122,7 @@ let LibwalletMobileService = {
 },
   async tryPickupSusu(tokenId) {
     let txResponse = null;
-        let tx = await this.contract.tryPickupSusu(tokenId);
+        let tx = await this.contract.tryPickupSusu(tokenId,BigInt(1));
         await tx.wait();
         console.log('tx:'+ await tx.wait());
         txResponse = tx;

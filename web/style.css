@@ -173,6 +173,10 @@ button {
     opacity: 1;
 }
 
+.flip-card.active .carry-susu .newSusu svg {
+    opacity: 1;
+}
+
 .flip-card.active .newSusu {
     animation: scale 4s linear forwards;
     animation-iteration-count: 1;
@@ -244,7 +248,7 @@ animation: moveUp 2s forwards;
 animation-delay: 4.5s;
 }
 
-.dropButton {
+.aim-button {
     position: absolute;
     bottom: 0;
     left: calc(50% - 3.5em);
@@ -266,6 +270,10 @@ animation-delay: 4.5s;
     transition: all 1s ease-in-out;
 }
 
-.drop-susu .dropButton {
+.drop-susu .aim-button {
     opacity: 1;
+}
+
+.leaflet-cache-pane div{
+    position: absolute;
 }
