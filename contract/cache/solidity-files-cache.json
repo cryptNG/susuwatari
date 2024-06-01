@@ -183,8 +183,8 @@
       ]
     },
     "/myapp/contracts/SusuwatariStorage.sol": {
-      "lastModificationDate": 1717250394067,
-      "contentHash": "e3132f94fb02511aa4c179e7fcd720f4",
+      "lastModificationDate": 1717251638067,
+      "contentHash": "109f255bc358bfcdcf85bec04ea64850",
       "sourceName": "contracts/SusuwatariStorage.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -316,8 +316,8 @@
       ]
     },
     "/myapp/contracts/SusuwatariLeafWalletFacet.sol": {
-      "lastModificationDate": 1717158084181,
-      "contentHash": "cb4b51370ca1dbd7b3e2a297f8d5f680",
+      "lastModificationDate": 1717254714407,
+      "contentHash": "43683ca9b6be640aa1d890fdae04ce8e",
       "sourceName": "contracts/SusuwatariLeafWalletFacet.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -354,7 +354,8 @@
         "@openzeppelin/contracts/utils/Context.sol",
         "./LeafWalletRegistryActivate.sol",
         "hardhat-deploy/solc_0.8/diamond/libraries/LibDiamond.sol",
-        "./SusuwatariStorage.sol"
+        "./SusuwatariStorage.sol",
+        "./LibSusuwatari.sol"
       ],
       "versionPragmas": [
         "^0.8.18"
@@ -452,8 +453,8 @@
       ]
     },
     "/myapp/contracts/SusuwatariFacet.sol": {
-      "lastModificationDate": 1717249793917,
-      "contentHash": "269fef422f6eb574c60dc40155378d0b",
+      "lastModificationDate": 1717257296447,
+      "contentHash": "abdaf8ae06aa8fdf513c16fde1262e37",
       "sourceName": "contracts/SusuwatariFacet.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -501,8 +502,8 @@
       ]
     },
     "/myapp/contracts/LibSusuwatari.sol": {
-      "lastModificationDate": 1717249721117,
-      "contentHash": "446b8e945eeaea15e3b3a4222243284b",
+      "lastModificationDate": 1717257342137,
+      "contentHash": "7a21b1c5bd0dbe55d5990ea289434295",
       "sourceName": "contracts/LibSusuwatari.sol",
       "solcConfig": {
         "version": "0.8.18",

@@ -22,6 +22,7 @@ struct LeafWalletStorage {
     struct UserState {
         uint256[] ownedTokens;
         BaggageSlot slot;
+        uint8 team;
     }
 
 
@@ -46,6 +47,7 @@ struct LeafWalletStorage {
         mapping(address => uint256) maxSlotCount;
         address[] susuOwners;
         mapping(uint256 => Susu) tokenIdToSusu;
+        mapping(address => uint8) ownerToTeam;
         bool isInitialized;
         mapping(uint256 => address) baggedSusus; 
     }

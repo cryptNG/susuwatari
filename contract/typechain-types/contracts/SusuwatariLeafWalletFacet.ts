@@ -4,6 +4,7 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -33,6 +34,7 @@ export interface SusuwatariLeafWalletFacetInterface extends utils.Interface {
     "getDeviceOwner()": FunctionFragment;
     "getRelatedDevices()": FunctionFragment;
     "isSenderRegistered()": FunctionFragment;
+    "registerAndAssignMe(uint8)": FunctionFragment;
   };
 
   getFunction(
@@ -42,6 +44,7 @@ export interface SusuwatariLeafWalletFacetInterface extends utils.Interface {
       | "getDeviceOwner"
       | "getRelatedDevices"
       | "isSenderRegistered"
+      | "registerAndAssignMe"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -64,6 +67,10 @@ export interface SusuwatariLeafWalletFacetInterface extends utils.Interface {
     functionFragment: "isSenderRegistered",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "registerAndAssignMe",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "assignActivatableAddressToSender",
@@ -83,6 +90,10 @@ export interface SusuwatariLeafWalletFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "isSenderRegistered",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerAndAssignMe",
     data: BytesLike
   ): Result;
 
@@ -145,6 +156,11 @@ export interface SusuwatariLeafWalletFacet extends BaseContract {
     getRelatedDevices(overrides?: CallOverrides): Promise<[string[]]>;
 
     isSenderRegistered(overrides?: CallOverrides): Promise<[boolean]>;
+
+    registerAndAssignMe(
+      team: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   assignActivatableAddressToSender(
@@ -160,6 +176,11 @@ export interface SusuwatariLeafWalletFacet extends BaseContract {
 
   isSenderRegistered(overrides?: CallOverrides): Promise<boolean>;
 
+  registerAndAssignMe(
+    team: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     assignActivatableAddressToSender(
       assignee: PromiseOrValue<string>,
@@ -173,6 +194,11 @@ export interface SusuwatariLeafWalletFacet extends BaseContract {
     getRelatedDevices(overrides?: CallOverrides): Promise<string[]>;
 
     isSenderRegistered(overrides?: CallOverrides): Promise<boolean>;
+
+    registerAndAssignMe(
+      team: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -197,6 +223,11 @@ export interface SusuwatariLeafWalletFacet extends BaseContract {
     getRelatedDevices(overrides?: CallOverrides): Promise<BigNumber>;
 
     isSenderRegistered(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerAndAssignMe(
+      team: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -215,6 +246,11 @@ export interface SusuwatariLeafWalletFacet extends BaseContract {
 
     isSenderRegistered(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    registerAndAssignMe(
+      team: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

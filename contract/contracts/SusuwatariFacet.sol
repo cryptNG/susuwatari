@@ -18,8 +18,25 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
     using Address for address;
     using Strings for uint256;
 
-    function registerMe() external {
-        LibSusuwatari.registerMe(susu());
+
+    event DroppedSusu(
+        uint64 originLocation,
+        uint64 currentLocation,
+        uint64 destination,
+        uint256 tokenId,
+        uint256 team
+    );
+
+    
+event MintedSusu(uint256 tokenId, string message, address owner, uint8 team);
+
+event PickedUpSusu(uint256 tokenId, uint64 location, string message, address sender, address owner, uint8 team);
+
+    
+    function registerMe(uint8 team) external {
+        (uint256 tokenId, string memory message, address owner,uint8 setteam) = LibSusuwatari.registerMe(susu(), team);
+        
+        emit MintedSusu(tokenId, message, owner, setteam);
     }
 
     function aimInitialSusu(
@@ -38,18 +55,17 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
             );
     }
 
-    function dropSusu(
-        uint256 tokenId,
-        uint64 location
-    ) external returns (uint256, uint64) {
-        return LibSusuwatari.dropSusu(susu(), tokenId, location);
+  function dropSusu(uint256 tokenId, uint64 location) external {
+        (uint64 originLocation, uint64 currentLocation, uint64 destination, uint256 rettokenId, uint8 team) = LibSusuwatari.dropSusu(susu(), tokenId, location);
+        
+        emit DroppedSusu(originLocation, currentLocation, destination, rettokenId, team);
     }
-
-    function tryPickupSusu(
-        uint256 tokenId,
-        uint64 location
-    ) external returns (uint256, uint64) {
-        return LibSusuwatari.tryPickupSusu(susu(), tokenId, location);
+    
+  
+    function tryPickupSusu(uint256 tokenId, uint64 location) external {
+        (uint256 rettokenId, uint64 retlocation, string memory message, address sender, address owner, uint8 team) = LibSusuwatari.tryPickupSusu(susu(), tokenId, location);
+     
+        emit PickedUpSusu(rettokenId, retlocation, message, sender, owner, team);
     }
 
     function getCurrentState() external view returns (UserState memory) {
@@ -57,7 +73,9 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
     }
 
     function giveSusuwatari() external {
-        LibSusuwatari.giveSusuwatari(susu());
+        (uint256 tokenId, string memory message, address owner, uint8 team) = LibSusuwatari.giveSusuwatari(susu());
+        
+        emit MintedSusu(tokenId, message, owner, team);
     }
 
     function getAllSusuwataris()

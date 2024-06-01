@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -38,12 +42,14 @@ export type BaggageSlotStructOutput = [BigNumber, BigNumber, string] & {
 export type UserStateStruct = {
   ownedTokens: PromiseOrValue<BigNumberish>[];
   slot: BaggageSlotStruct;
+  team: PromiseOrValue<BigNumberish>;
 };
 
-export type UserStateStructOutput = [BigNumber[], BaggageSlotStructOutput] & {
-  ownedTokens: BigNumber[];
-  slot: BaggageSlotStructOutput;
-};
+export type UserStateStructOutput = [
+  BigNumber[],
+  BaggageSlotStructOutput,
+  number
+] & { ownedTokens: BigNumber[]; slot: BaggageSlotStructOutput; team: number };
 
 export declare namespace LibSusuwatari {
   export type SusuwatariInfoStruct = {
@@ -75,7 +81,7 @@ export interface SusuwatariFacetInterface extends utils.Interface {
     "getBaggedSusus()": FunctionFragment;
     "getCurrentState()": FunctionFragment;
     "giveSusuwatari()": FunctionFragment;
-    "registerMe()": FunctionFragment;
+    "registerMe(uint8)": FunctionFragment;
     "tryPickupSusu(uint256,uint64)": FunctionFragment;
   };
 
@@ -122,7 +128,7 @@ export interface SusuwatariFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "registerMe",
-    values?: undefined
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "tryPickupSusu",
@@ -156,8 +162,58 @@ export interface SusuwatariFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "DroppedSusu(uint64,uint64,uint64,uint256,uint256)": EventFragment;
+    "MintedSusu(uint256,string,address,uint8)": EventFragment;
+    "PickedUpSusu(uint256,uint64,string,address,address,uint8)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "DroppedSusu"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MintedSusu"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PickedUpSusu"): EventFragment;
 }
+
+export interface DroppedSusuEventObject {
+  originLocation: BigNumber;
+  currentLocation: BigNumber;
+  destination: BigNumber;
+  tokenId: BigNumber;
+  team: BigNumber;
+}
+export type DroppedSusuEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+  DroppedSusuEventObject
+>;
+
+export type DroppedSusuEventFilter = TypedEventFilter<DroppedSusuEvent>;
+
+export interface MintedSusuEventObject {
+  tokenId: BigNumber;
+  message: string;
+  owner: string;
+  team: number;
+}
+export type MintedSusuEvent = TypedEvent<
+  [BigNumber, string, string, number],
+  MintedSusuEventObject
+>;
+
+export type MintedSusuEventFilter = TypedEventFilter<MintedSusuEvent>;
+
+export interface PickedUpSusuEventObject {
+  tokenId: BigNumber;
+  location: BigNumber;
+  message: string;
+  sender: string;
+  owner: string;
+  team: number;
+}
+export type PickedUpSusuEvent = TypedEvent<
+  [BigNumber, BigNumber, string, string, string, number],
+  PickedUpSusuEventObject
+>;
+
+export type PickedUpSusuEventFilter = TypedEventFilter<PickedUpSusuEvent>;
 
 export interface SusuwatariFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -217,6 +273,7 @@ export interface SusuwatariFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     registerMe(
+      team: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -256,6 +313,7 @@ export interface SusuwatariFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   registerMe(
+    team: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -278,7 +336,7 @@ export interface SusuwatariFacet extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       location: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<void>;
 
     getAllSusuwataris(
       overrides?: CallOverrides
@@ -292,16 +350,64 @@ export interface SusuwatariFacet extends BaseContract {
 
     giveSusuwatari(overrides?: CallOverrides): Promise<void>;
 
-    registerMe(overrides?: CallOverrides): Promise<void>;
+    registerMe(
+      team: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     tryPickupSusu(
       tokenId: PromiseOrValue<BigNumberish>,
       location: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "DroppedSusu(uint64,uint64,uint64,uint256,uint256)"(
+      originLocation?: null,
+      currentLocation?: null,
+      destination?: null,
+      tokenId?: null,
+      team?: null
+    ): DroppedSusuEventFilter;
+    DroppedSusu(
+      originLocation?: null,
+      currentLocation?: null,
+      destination?: null,
+      tokenId?: null,
+      team?: null
+    ): DroppedSusuEventFilter;
+
+    "MintedSusu(uint256,string,address,uint8)"(
+      tokenId?: null,
+      message?: null,
+      owner?: null,
+      team?: null
+    ): MintedSusuEventFilter;
+    MintedSusu(
+      tokenId?: null,
+      message?: null,
+      owner?: null,
+      team?: null
+    ): MintedSusuEventFilter;
+
+    "PickedUpSusu(uint256,uint64,string,address,address,uint8)"(
+      tokenId?: null,
+      location?: null,
+      message?: null,
+      sender?: null,
+      owner?: null,
+      team?: null
+    ): PickedUpSusuEventFilter;
+    PickedUpSusu(
+      tokenId?: null,
+      location?: null,
+      message?: null,
+      sender?: null,
+      owner?: null,
+      team?: null
+    ): PickedUpSusuEventFilter;
+  };
 
   estimateGas: {
     aimInitialSusu(
@@ -329,6 +435,7 @@ export interface SusuwatariFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     registerMe(
+      team: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -365,6 +472,7 @@ export interface SusuwatariFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     registerMe(
+      team: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

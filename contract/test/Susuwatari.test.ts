@@ -29,7 +29,7 @@ describe("Susuwatari contract", function () {
 
   it("Should register a new user", async function () {
     const ad1 = SusuwatariContract.connect(address1);
-    await ad1.registerMe();
+    await ad1.registerMe(0);
     const state = await ad1.getCurrentState();
     expect(state.ownedTokens).to.have.length(1);
     expect(state.ownedTokens[0]).to.equal(1);
@@ -99,7 +99,7 @@ describe("Susuwatari contract", function () {
 
     //new user
     const ad2 = SusuwatariContract.connect(address2);
-    await ad2.registerMe();
+    await ad2.registerMe(1);
     await ad2.aimInitialSusu(addTwoTokenId, addTwoLocation, addTwoDestination, addTwoMessage); //make space
 
 
@@ -120,7 +120,7 @@ describe("Susuwatari contract", function () {
 
     //new user
     const ad3 = SusuwatariContract.connect(address3);
-    await ad3.registerMe();
+    await ad3.registerMe(0);
     await ad3.aimInitialSusu(addThreeTokenId, addThreeLocation, addThreeDestination, addThreeMessage); //make space
 
 
@@ -152,7 +152,7 @@ describe("Susuwatari contract", function () {
   it("User should aim a Susuwatari and cannot pick up the exact same Susuwatari they aimed", async function () {
 
     const ad4 = SusuwatariContract.connect(address4);
-    await ad4.registerMe();
+    await ad4.registerMe(0);
 
     await ad4.aimInitialSusu(addFourTokenId, addFourLocation, addFourDestination, addFourMessage);
 
@@ -245,7 +245,7 @@ describe("Susuwatari contract", function () {
 
     let errorOccurred = false;
     try {
-      await SusuwatariContract.connect(address1).registerMe();
+      await SusuwatariContract.connect(address1).registerMe(0);
     } catch (error) {
       console.log("Error message:", error.message);
       errorOccurred = error.message.includes("User already registered");
@@ -257,7 +257,7 @@ describe("Susuwatari contract", function () {
 
   const addFiveTokenId = 6;
   it("Should fail when non-owner tries to aim an initial Susu", async function () {
-    await SusuwatariContract.connect(address5).registerMe();
+    await SusuwatariContract.connect(address5).registerMe(0);
     let state = await SusuwatariContract.connect(address5).getCurrentState();
     console.log(`Current state retrieved:
       Susu Token ID: ${state.slot.susuTokenId}
