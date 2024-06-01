@@ -75,7 +75,7 @@ const selectedPosition = () => {
               
               const points = calculatePoints(distance);
 
-              resolve(points); // Resolve with the calculated distance
+              resolve({ center, userLatLng, points }); // Resolve with the calculated distance
           }, (error) => {
               reject(error); // Reject if there is an error in getting the user's location
           });
