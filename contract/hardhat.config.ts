@@ -9,7 +9,7 @@ const { GNOSIS_MNEMONIC } = process.env;
 //console.log(process.env);
 const config: HardhatUserConfig = {
     solidity: {
-        version: "0.8.10",
+        version: "0.8.18",
         settings: {
             optimizer: {
                 enabled: true,
