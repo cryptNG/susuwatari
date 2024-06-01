@@ -45,10 +45,34 @@ export type UserStateStructOutput = [BigNumber[], BaggageSlotStructOutput] & {
   slot: BaggageSlotStructOutput;
 };
 
+export declare namespace LibSusuwatari {
+  export type SusuwatariInfoStruct = {
+    tokenId: PromiseOrValue<BigNumberish>;
+    owner: PromiseOrValue<string>;
+  };
+
+  export type SusuwatariInfoStructOutput = [BigNumber, string] & {
+    tokenId: BigNumber;
+    owner: string;
+  };
+
+  export type BaggedSusuInfoStruct = {
+    tokenId: PromiseOrValue<BigNumberish>;
+    carrier: PromiseOrValue<string>;
+  };
+
+  export type BaggedSusuInfoStructOutput = [BigNumber, string] & {
+    tokenId: BigNumber;
+    carrier: string;
+  };
+}
+
 export interface SusuwatariFacetInterface extends utils.Interface {
   functions: {
     "aimInitialSusu(uint256,string,string,string)": FunctionFragment;
     "dropSusu(uint256,string)": FunctionFragment;
+    "getAllSusuwataris()": FunctionFragment;
+    "getBaggedSusus()": FunctionFragment;
     "getCurrentState()": FunctionFragment;
     "giveSusuwatari()": FunctionFragment;
     "registerMe()": FunctionFragment;
@@ -59,6 +83,8 @@ export interface SusuwatariFacetInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "aimInitialSusu"
       | "dropSusu"
+      | "getAllSusuwataris"
+      | "getBaggedSusus"
       | "getCurrentState"
       | "giveSusuwatari"
       | "registerMe"
@@ -77,6 +103,14 @@ export interface SusuwatariFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "dropSusu",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllSusuwataris",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBaggedSusus",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getCurrentState",
@@ -100,6 +134,14 @@ export interface SusuwatariFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dropSusu", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllSusuwataris",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaggedSusus",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentState",
     data: BytesLike
@@ -158,6 +200,14 @@ export interface SusuwatariFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getAllSusuwataris(
+      overrides?: CallOverrides
+    ): Promise<[LibSusuwatari.SusuwatariInfoStructOutput[]]>;
+
+    getBaggedSusus(
+      overrides?: CallOverrides
+    ): Promise<[LibSusuwatari.BaggedSusuInfoStructOutput[]]>;
+
     getCurrentState(
       overrides?: CallOverrides
     ): Promise<[UserStateStructOutput]>;
@@ -191,6 +241,14 @@ export interface SusuwatariFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getAllSusuwataris(
+    overrides?: CallOverrides
+  ): Promise<LibSusuwatari.SusuwatariInfoStructOutput[]>;
+
+  getBaggedSusus(
+    overrides?: CallOverrides
+  ): Promise<LibSusuwatari.BaggedSusuInfoStructOutput[]>;
+
   getCurrentState(overrides?: CallOverrides): Promise<UserStateStructOutput>;
 
   giveSusuwatari(
@@ -222,6 +280,14 @@ export interface SusuwatariFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, string]>;
 
+    getAllSusuwataris(
+      overrides?: CallOverrides
+    ): Promise<LibSusuwatari.SusuwatariInfoStructOutput[]>;
+
+    getBaggedSusus(
+      overrides?: CallOverrides
+    ): Promise<LibSusuwatari.BaggedSusuInfoStructOutput[]>;
+
     getCurrentState(overrides?: CallOverrides): Promise<UserStateStructOutput>;
 
     giveSusuwatari(overrides?: CallOverrides): Promise<void>;
@@ -251,6 +317,10 @@ export interface SusuwatariFacet extends BaseContract {
       location: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    getAllSusuwataris(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBaggedSusus(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCurrentState(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -283,6 +353,10 @@ export interface SusuwatariFacet extends BaseContract {
       location: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    getAllSusuwataris(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBaggedSusus(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCurrentState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

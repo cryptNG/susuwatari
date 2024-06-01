@@ -397,4 +397,29 @@ describe("Susuwatari contract", function () {
 
     expect(errorOccurred).to.be.true;
   });
+
+  it("Should retrieve all Susuwataris", async function () {
+    const ad1 = SusuwatariContract.connect(address1);
+    const allSusuwataris = await ad1.getAllSusuwataris();
+
+    console.log("All Susuwataris:");
+    for (const susuwatari of allSusuwataris) {
+      console.log(`Token ID: ${susuwatari.tokenId}, Owner: ${susuwatari.owner}`);
+    }
+
+    expect(allSusuwataris).to.have.length(6); // Adjust based on the number of Susuwataris created
+  });
+
+  it("Should retrieve all Bagged Susus", async function () {
+    const ad1 = SusuwatariContract.connect(address1);
+    const baggedSusus = await ad1.getBaggedSusus();
+
+    console.log("Bagged Susus:");
+    for (const baggedSusu of baggedSusus) {
+      console.log(`Token ID: ${baggedSusu.tokenId}, Carrier: ${baggedSusu.carrier}`);
+    }
+
+    expect(baggedSusus).to.have.length(3); 
+  });
+
 });
