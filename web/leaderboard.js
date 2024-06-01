@@ -36,12 +36,12 @@ const LeaderBoard = {
           susu.posCurrent = decodeCoordinates(susu.current);
           susu.posDestination = decodeCoordinates(susu.destination);
 
-          
+          return susu;
         
         });
 
-        return susus;
-    }
+        return [...susus];
+    },
     async autoRefreshDropEvents (){
 
         let lastFromBlock=0;

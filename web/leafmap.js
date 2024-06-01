@@ -115,7 +115,7 @@ function updatePositionEvent(susus)  {
       div.innerHTML = html;
       L.DomEvent.on(div, 'click', handleCacheClick.bind(this, susu));
       let cacheElement = document.getElementById(susu.tokenId + '-author');
-      const BigIntAdress = BigInt(susu.ownerAdress);
+      const BigIntAdress = BigInt(susu.ownerAddress);
       const uniqueIconSeed = BigIntAdress ^ BigInt(susu.tokenId);
       let hexSeed = uniqueIconSeed.toString(16);
       const iconGenerator = new Icon(hexSeed, cacheElement);

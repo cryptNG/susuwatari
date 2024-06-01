@@ -862,7 +862,11 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
      
 
       try {
-        
+        const susuwataris = await LibwalletMobileService.getAllSusuwataris();
+        const sususWithOwner = LeaderBoard.susus.map((susu)=>{
+          susu.ownerAddress =susuwataris.find((_susu)=>susu.tokenId===_susu.tokenId).owner;
+
+        })
 
         updatePositionEvent(LeaderBoard.susus);
 
