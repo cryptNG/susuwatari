@@ -2,16 +2,18 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
   document.querySelector('nav .game').addEventListener('click',(e)=>{
 
-    document.querySelectorAll('.pane').forEach((pane)=> {
-     pane.classList.remove('active');
-    } );
+      document.querySelectorAll('.pane').forEach((pane)=> {
+      pane.classList.remove('active');
+      } );
     document.querySelectorAll('nav span').forEach((menu)=> {
       menu.classList.remove('active');
-     } );
-     document.querySelector('#game-pane').classList.add('active');
-     document.querySelector('nav .game').classList.add('active');
- },false);
+     } );  
 
+    document.querySelector('#game-pane').classList.add('active');
+    document.querySelector('nav .game').classList.add('active');
+
+
+}, false);
     const messagesDiv = document.getElementById('messages');
     const messagesGameDiv = document.getElementById('gameMessages');
     const messagesChooseLocationDiv = document.getElementById('locationMessages');
@@ -799,28 +801,61 @@ document.addEventListener("DOMContentLoaded", async ()=> {
       let hexSeed = uniqueIconSeed.toString(16);
       const iconGenerator = new Icon(hexSeed, document.querySelector('.newSusu svg'));
       iconGenerator.generateIcon();
-    }
-    await displayGameMessage("You've found a new Susuwatari!");
-    await timeout(1500);
-    await moveGameMessage();
-    await timeout(2500);
-    initMap();
-    document.querySelector('.dropButton').style.display = 'block';
-    panToUserLocation();
-    await displayGameMessage("Please choose its destination!");
-    updatePositionPeriodically();
+      await displayGameMessage("You've found a new Susuwatari!");
+      await timeout(1500);
+      await moveGameMessage();
+      await timeout(2500);
+      initMap();
+      panToUserLocation();
+      await displayGameMessage("Please choose its destination!");
+      document.querySelector('.dropButton').style.display = 'block';
+      updatePositionPeriodically();
 
-    map.on('move', async () => {
+      map.on('move', async () => {
+        try {
+          const { points } = await selectedPosition();
+          deleteAndType = false; // Switch to normal text displayer
+          await displayGameMessage(`Potential points: ${points}`);
+          deleteAndType = true; // Switch back to delete and type mode
+        } catch (error) {
+          console.error("Error:", error);
+          // Handle error
+        }
+      });
+    }
+
+    if(LibwalletMobileService.isCarryingSusu){
+      console.log("statenew")
+      await timeout(1500);
+      await moveGameMessage();
+      await displayGameMessage("Current Points;");
+      
+    }
+
+    if(LibwalletMobileService.isPickingSusu){
+      console.log("startpick")
+      await displayGameMessage("It seems like your Slot is empty...");
+      await timeout(1500);
+      await moveGameMessage();
+      await displayGameMessage("Let's find you a new Susuwatari!");
+      initMap();
+      panToUserLocation();
+
       try {
-        const { points } = await selectedPosition();
-        deleteAndType = false; // Switch to normal text displayer
-        await displayGameMessage(`Potential points: ${points}`);
-        deleteAndType = true; // Switch back to delete and type mode
-      } catch (error) {
-        console.error("Error:", error);
-        // Handle error
-      }
-    });
+        const susuwataris = await LibwalletMobileService.getAllSusuwataris();
+        console.log('All Susuwataris:', susuwataris);
+    } catch (err) {
+        console.error('Error fetching Susuwataris:', err);
+    }
+
+    }
+
+
+
+
+
+
+
     
     document.querySelector('.dropButton').addEventListener('click', async () => {
       try {

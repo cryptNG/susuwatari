@@ -53,7 +53,7 @@ const LeaderBoard = {
                                     const decLog = LibwalletMobileService.contract.interface.parseLog(log)
                                     if(decLog?.name==='DroppedSusu'){
                                         const data = LibwalletMobileService.interface.decodeEventLog("DroppedSusu",log.data);
-                                        console.log(data);
+                                     //   console.log(data);
                                         this.events.push({
                                             origin:data.originLocation,
                                             current:data.currentLocation,
