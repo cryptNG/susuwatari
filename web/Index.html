@@ -5,10 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wallet App</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="leaderboard.css">
 </head>
 <body>
+  <div class="pane" id="leader-board-pane">
+    <div class="leader-board">
+      <ul>
+        <li class="team-a"><span class="caption">Team A: </span><span class="points"></span></li>
+        <li class="team-b"><span class="caption">Team A: </span><span class="points"></span></li>
+      </ul>
+    </div>
+  </div>
   <div class="flip-card">
     <div class="flip-card-inner">
+      <nav>
+        <span class="game active">Game</span>
+        <span class="leader-board">Leaderboard</span>
+        <span>Notifications</span>
+      </nav>
       <div class="flip-card-front">
        <div class="loadingText">
           <div class="loader" id="loader"></div>
@@ -16,6 +30,7 @@
       </div>
       </div>
       <div class="flip-card-back">
+        
         <div class="newSusu">
           <svg id="icons" width=150 height=150 viewBox="-60 -60 120 120"  xmlns="http://www.w3.org/2000/svg"
              xmlns:svg="http://www.w3.org/2000/svg">
@@ -124,9 +139,11 @@
   <script src="libwallet.js"></script>
   <script src="script.js"></script>
   <script src="icon.js"></script>
+  <script src="leaderboard.js"></script>
   <script type="module">
     import { ethers } from "./ethers.min.js";
     window.ethers = ethers;
+    LeaderBoard.init();
   </script>
 </body>
 </html>

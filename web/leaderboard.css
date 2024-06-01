@@ -1,0 +1,61 @@
+body{
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+nav {
+    position: fixed;
+    width: 90dvw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    top: -4dvh;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+}
+
+nav span {
+    padding: 0.7dvh 1em 1.3dvh 1em;
+    height: 2dvh;
+    background-color: white;
+    border-radius: 10px 10px 0 0;
+    border-width: 1px 1px 0 1px;
+    border-style: solid;
+    border-color: #a185bc;
+    background-color: rgb(203, 230, 255);
+    font-family: system-ui;
+    font-size: medium;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: mediumvioletred;
+    position: relative;
+    top: 0.5em;
+}
+
+nav span.active {
+    top:0;
+    padding: 1dvh 1em;
+    background-color: aliceblue;
+}
+
+.flip-card .flip-card-front{
+    background-image: linear-gradient(0deg, #d9afd9 0%, #ffffff 50%);
+}
+
+.pane {
+    position: fixed;
+    opacity: 0;
+    top: -100dvh;
+    left: 0;
+    width: 100dvw;
+    height: 100dvh;
+    z-index: 1111;
+    background: yellow;
+}
+
+.pane.active{
+    opacity: 1;
+    top:0;
+}
