@@ -198,13 +198,37 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
     map.on('move', async () => {
       try {
-        const points = await selectedPosition();
-          deleteAndType = false; // Switch to normal text displayer
-          await displayGameMessage(`Potential points: ${points}`);
-          deleteAndType = true; // Switch back to delete and type mode
+        const { points } = await selectedPosition();
+        deleteAndType = false; // Switch to normal text displayer
+        await displayGameMessage(`Potential points: ${points}`);
+        deleteAndType = true; // Switch back to delete and type mode
       } catch (error) {
-          console.error("Error:", error);
-          // Handle error
+        console.error("Error:", error);
+        // Handle error
       }
-  });
+    });
+    
+    document.querySelector('.dropButton').addEventListener('click', async () => {
+      try {
+        const tokenId = LibwalletMobileService.currentState.slot.susuTokenId;
+    
+        // Get the user's current position and selected position
+        const { center, userLatLng } = await selectedPosition();
+     
+        // Calculate spot IDs for both locations
+        const location = getSpotIdForCoordinates(userLatLng);
+        const destination = getSpotIdForCoordinates(center);
+    
+        const message = "message";
+    
+        console.log("Test" + userLatLng, center);
+        console.log("aiming susu");
+        const tx = await LibwalletMobileService.aimInitialSusu(tokenId, location, destination, message);
+        console.log("POW susu shot");
+      } catch (err) {
+        console.log("Susu missed...");
+        console.log(err);
+      }
+    });
+
 });

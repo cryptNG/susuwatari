@@ -33,9 +33,9 @@ struct LeafWalletStorage {
 
     struct Susu {
         uint256 tokenId;
-        string originLocation;
-        string currentLocation;
-        string destination;
+        uint64 originLocation;
+        uint64 currentLocation;
+        uint64 destination;
         string message;
         address carrier;
         uint256 dropCooldownTime;
@@ -61,7 +61,7 @@ contract StorageHandler {
            cs.slot := position
         }
     }
-
+     
     function os() internal pure returns (OwnableStorage storage cs) {
         bytes32 position = keccak256("ownable.contract.storage");
         assembly {

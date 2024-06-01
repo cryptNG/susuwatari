@@ -13,6 +13,7 @@ import {UsingDiamondOwner} from "hardhat-deploy/solc_0.8/diamond/UsingDiamondOwn
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
+
 contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
     using Address for address;
     using Strings for uint256;
@@ -23,24 +24,31 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
 
     function aimInitialSusu(
         uint256 tokenId,
-        string memory location,
-        string memory destination,
+        uint64 location,
+        uint64 destination,
         string memory message
-    ) external returns (uint256, string memory, string memory, string memory) {
-        return LibSusuwatari.aimInitialSusu(susu(), tokenId, location, destination, message);
+    ) external returns (uint256, uint64, uint64, string memory) {
+        return
+            LibSusuwatari.aimInitialSusu(
+                susu(),
+                tokenId,
+                location,
+                destination,
+                message
+            );
     }
 
     function dropSusu(
         uint256 tokenId,
-        string memory location
-    ) external returns (uint256, string memory) {
+        uint64 location
+    ) external returns (uint256, uint64) {
         return LibSusuwatari.dropSusu(susu(), tokenId, location);
     }
 
     function tryPickupSusu(
         uint256 tokenId,
-        string memory location
-    ) external returns (uint256, string memory) {
+        uint64 location
+    ) external returns (uint256, uint64) {
         return LibSusuwatari.tryPickupSusu(susu(), tokenId, location);
     }
 
@@ -49,7 +57,22 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
     }
 
     function giveSusuwatari() external {
-    LibSusuwatari.giveSusuwatari(susu());
-}
+        LibSusuwatari.giveSusuwatari(susu());
+    }
 
+    function getAllSusuwataris()
+        external
+        view
+        returns (LibSusuwatari.SusuwatariInfo[] memory)
+    {
+        return LibSusuwatari.getAllSusuwataris(susu());
+    }
+
+    function getBaggedSusus()
+        external
+        view
+        returns (LibSusuwatari.BaggedSusuInfo[] memory)
+    {
+        return LibSusuwatari.getBaggedSusus(susu());
+    }
 }

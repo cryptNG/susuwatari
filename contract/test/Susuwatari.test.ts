@@ -36,8 +36,8 @@ describe("Susuwatari contract", function () {
   });
 
   const addOneTokenId = 1;
-  const addOneLocation = "Location1";
-  const addOneDestination = "Destination1";
+  const addOneLocation = BigInt(1);
+  const addOneDestination = BigInt(10);;
   const addOneMessage = "Message1";
   it("Should aim an initial Susu", async function () {
 
@@ -89,8 +89,8 @@ describe("Susuwatari contract", function () {
   });
 
   const addTwoTokenId = 2;
-  const addTwoLocation = "Location2";
-  const addTwoDestination = "Desintation2";
+  const addTwoLocation = BigInt(2);;
+  const addTwoDestination = BigInt(20);;
   const addTwoMessage = "Message2";
 
 
@@ -110,8 +110,8 @@ describe("Susuwatari contract", function () {
   });
 
   const addThreeTokenId = 3;
-  const addThreeLocation = "Location3";
-  const addThreeDestination = "Desintation3";
+  const addThreeLocation = BigInt(3);;
+  const addThreeDestination = BigInt(30);;
   const addThreeMessage = "Message3";
 
 
@@ -145,8 +145,8 @@ describe("Susuwatari contract", function () {
 
 
   const addFourTokenId = 4;
-  const addFourLocation = "Location4";
-  const addFourDestination = "Destination4";
+  const addFourLocation = BigInt(4);;
+  const addFourDestination = BigInt(40);;
   const addFourMessage = "Message4";
 
   it("User should aim a Susuwatari and cannot pick up the exact same Susuwatari they aimed", async function () {
@@ -197,7 +197,7 @@ describe("Susuwatari contract", function () {
   });
 
 
-  let lastDropLocation = 'dropLocation1'
+  let lastDropLocation = BigInt(11);
   it("Should drop a Susu", async function () {
     const ad2 = SusuwatariContract.connect(address2);
 
@@ -267,7 +267,7 @@ describe("Susuwatari contract", function () {
 
     let errorOccurred = false;
     try {
-      await SusuwatariContract.connect(address1).aimInitialSusu(addFiveTokenId, 'somelocation', 'somedestination', 'somemessage');
+      await SusuwatariContract.connect(address1).aimInitialSusu(addFiveTokenId, BigInt(111), BigInt(111111), BigInt(1110));
     } catch (error) {
       console.log("Error message:", error.message);
       errorOccurred = error.message.includes("Caller is not owner");
@@ -326,8 +326,8 @@ describe("Susuwatari contract", function () {
 
   it("Should fail interactions with non-existent Susus (tokenId 0)", async function() {
       const tokenId = 0;
-      const location = "Location";
-      const destination = "Destination";
+      const location = BigInt(1111);;
+      const destination = BigInt(11111);;
       const message = "Message";
 
       let errorOccurred = false;
@@ -363,8 +363,8 @@ describe("Susuwatari contract", function () {
 
   it("Should fail interactions with non-existent Susus (tokenId higher than total)", async function() {
     const tokenId = 999;
-    const location = "Location";
-    const destination = "Destination";
+    const location = BigInt(1111111);;
+    const destination = BigInt(11111111);;
     const message = "Message";
 
     let errorOccurred = false;
@@ -397,4 +397,29 @@ describe("Susuwatari contract", function () {
 
     expect(errorOccurred).to.be.true;
   });
+
+  it("Should retrieve all Susuwataris", async function () {
+    const ad1 = SusuwatariContract.connect(address1);
+    const allSusuwataris = await ad1.getAllSusuwataris();
+
+    console.log("All Susuwataris:");
+    for (const susuwatari of allSusuwataris) {
+      console.log(`Token ID: ${susuwatari.tokenId}, Owner: ${susuwatari.owner}`);
+    }
+
+    expect(allSusuwataris).to.have.length(6); // Adjust based on the number of Susuwataris created
+  });
+
+  it("Should retrieve all Bagged Susus", async function () {
+    const ad1 = SusuwatariContract.connect(address1);
+    const baggedSusus = await ad1.getBaggedSusus();
+
+    console.log("Bagged Susus:");
+    for (const baggedSusu of baggedSusus) {
+      console.log(`Token ID: ${baggedSusu.tokenId}, Carrier: ${baggedSusu.carrier}`);
+    }
+
+    expect(baggedSusus).to.have.length(3); 
+  });
+
 });
