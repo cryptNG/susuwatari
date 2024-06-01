@@ -6,10 +6,17 @@
   <title>Wallet App</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="leafletmap/leaflet.css">
+  <link rel="stylesheet" href="leaderboard.css">
 </head>
 <body>
+  
   <div class="flip-card">
     <div class="flip-card-inner">
+      <nav>
+        <span class="game active">Game</span>
+        <span class="leader-board">Leaderboard</span>
+        <span>Notifications</span>
+      </nav>
       <div class="flip-card-front">
        <div class="loadingText">
           <div class="loader" id="loader"></div>
@@ -17,111 +24,120 @@
               </div>
       </div>
       <div class="flip-card-back">
-        <div class="svgTextWrapper">
-        <div class="newSusu">
-          <svg id="icons" width=150 height=150 viewBox="-60 -60 120 120"  xmlns="http://www.w3.org/2000/svg"
-             xmlns:svg="http://www.w3.org/2000/svg">
-             <defs>
-              <filter id="drop-shadow-normal" x="-100%" y="-100%" width="400%" height="400%">
-                <feOffset result="offOut" in="SourceAlpha" dx="4" dy="4" />
-                <feColorMatrix result="matrixOut" in="offOut" type="matrix"
-                values="0.2 0 0 0 0 
-                        0 0.2 0 0 0 
-                        0 0 0.2 0 0 
-                        0 0 0 0.7 0" />
-                <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="5" />
-                <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-              </filter>
-              <filter id="drop-shadow-bold" x="-100%" y="-100%" width="400%" height="400%">
-                <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
-                <feColorMatrix result="matrixOut" in="offOut" type="matrix"
-                values="0.2 0 0 0 0 
-                        0 0.2 0 0 0 
-                        0 0 0.2 0 0 
-                        0 0 0 0.7 0" />
-                <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="7" />
-                <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-              </filter>
-              <filter id="drop-shadow-short" x="-100%" y="-100%" width="400%" height="400%">
-                <feOffset result="offOut" in="SourceAlpha" dx="3" dy="3" />
-                <feColorMatrix result="matrixOut" in="offOut" type="matrix"
-                values="0.2 0 0 0 0 
-                        0 0.2 0 0 0 
-                        0 0 0.2 0 0 
-                        0 0 0 0.7 0" />
-                <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="3" />
-                <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-              </filter>
-              <filter id="drop-shadow-hard" x="-100%" y="-100%" width="400%" height="400%">
-                <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
-                <feColorMatrix result="matrixOut" in="offOut" type="matrix"
-                values="0.2 0 0 0 0 
-                        0 0.2 0 0 0 
-                        0 0 0.2 0 0 
-                        0 0 0 0.7 0" />
-                <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="7" />
-                <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-              </filter>
-              <filter id="line-shadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="4" dy="4" stdDeviation="4"/>
-              </filter>
-              <filter id="drop-shadow-small" x="-100%" y="-100%" width="400%" height="400%">
-                <feOffset result="offOut" in="SourceAlpha" dx="3" dy="3" />
-                <feColorMatrix result="matrixOut" in="offOut" type="matrix"
-                values="0.2 0 0 0 0 
-                        0 0.2 0 0 0 
-                        0 0 0.2 0 0 
-                        0 0 0 1 0" />
-                <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="3" />
-                <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-              </filter>
-              <filter id="inset-shadow-small" x="-50%" y="-50%" width="200%" height="200%">
-              <feComponentTransfer in="SourceAlpha">
-                <feFuncA type="table" tableValues="1 0" />
-              </feComponentTransfer>
-              <feGaussianBlur stdDeviation="3"/>
-              <feOffset dx="3" dy="3" result="offsetblur"/>
-              <feFlood flood-color="rgb(0, 0, 0)" result="color"/>
-              <feComposite in2="offsetblur" operator="in"/>
-              <feComposite in2="SourceAlpha" operator="in" />
-              <feMerge>
-                <feMergeNode in="SourceGraphic" />
-                <feMergeNode />
-              </feMerge>
-            </filter>
-            <filter id="inset-shadow-normal" x="-50%" y="-50%" width="200%" height="200%">
-              <feComponentTransfer in="SourceAlpha">
-                <feFuncA type="table" tableValues="1 0" />
-              </feComponentTransfer>
-              <feGaussianBlur stdDeviation="8"/>
-              <feOffset dx="4" dy="4" result="offsetblur"/>
-              <feFlood flood-color="rgb(0, 0, 0)" result="color"/>
-              <feComposite in2="offsetblur" operator="in"/>
-              <feComposite in2="SourceAlpha" operator="in" />
-              <feMerge>
-                <feMergeNode in="SourceGraphic" />
-                <feMergeNode />
-              </feMerge>
-            </filter>
-              
-            </defs>
-           
-             <g
-               id="layer1">
-              <text
-                 xml:space="preserve"
-                 style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.1008px;font-family:Quicksand;fill:#ffffff;fill-opacity:1;stroke-width:0.0526088"
-                 x="135.128502"
-                 y="164.39116"
-                 text-anchor="end"
-                 id="text2679-4">dhsgfhksdg</text>
-              </g>
-          </svg>
+        <div class="pane" id="leader-board-pane">
+          <div class="leader-board">
+            <ul>
+              <li class="team-a"><span class="caption">Team A: </span><span class="points"></span></li>
+              <li class="team-b"><span class="caption">Team A: </span><span class="points"></span></li>
+            </ul>
+          </div>
         </div>
-        <div class="gameMessagesWrapper">
-        <span class="gameMessages" id="gameMessages"></span>      
+        <div class="pane active" id="game-pane">
+          <div class="svgTextWrapper">
+          <div class="newSusu">
+            <svg id="icons" width=150 height=150 viewBox="-60 -60 120 120"  xmlns="http://www.w3.org/2000/svg"
+              xmlns:svg="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="drop-shadow-normal" x="-100%" y="-100%" width="400%" height="400%">
+                  <feOffset result="offOut" in="SourceAlpha" dx="4" dy="4" />
+                  <feColorMatrix result="matrixOut" in="offOut" type="matrix"
+                  values="0.2 0 0 0 0 
+                          0 0.2 0 0 0 
+                          0 0 0.2 0 0 
+                          0 0 0 0.7 0" />
+                  <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="5" />
+                  <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                </filter>
+                <filter id="drop-shadow-bold" x="-100%" y="-100%" width="400%" height="400%">
+                  <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
+                  <feColorMatrix result="matrixOut" in="offOut" type="matrix"
+                  values="0.2 0 0 0 0 
+                          0 0.2 0 0 0 
+                          0 0 0.2 0 0 
+                          0 0 0 0.7 0" />
+                  <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="7" />
+                  <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                </filter>
+                <filter id="drop-shadow-short" x="-100%" y="-100%" width="400%" height="400%">
+                  <feOffset result="offOut" in="SourceAlpha" dx="3" dy="3" />
+                  <feColorMatrix result="matrixOut" in="offOut" type="matrix"
+                  values="0.2 0 0 0 0 
+                          0 0.2 0 0 0 
+                          0 0 0.2 0 0 
+                          0 0 0 0.7 0" />
+                  <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="3" />
+                  <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                </filter>
+                <filter id="drop-shadow-hard" x="-100%" y="-100%" width="400%" height="400%">
+                  <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
+                  <feColorMatrix result="matrixOut" in="offOut" type="matrix"
+                  values="0.2 0 0 0 0 
+                          0 0.2 0 0 0 
+                          0 0 0.2 0 0 
+                          0 0 0 0.7 0" />
+                  <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="7" />
+                  <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                </filter>
+                <filter id="line-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="4" dy="4" stdDeviation="4"/>
+                </filter>
+                <filter id="drop-shadow-small" x="-100%" y="-100%" width="400%" height="400%">
+                  <feOffset result="offOut" in="SourceAlpha" dx="3" dy="3" />
+                  <feColorMatrix result="matrixOut" in="offOut" type="matrix"
+                  values="0.2 0 0 0 0 
+                          0 0.2 0 0 0 
+                          0 0 0.2 0 0 
+                          0 0 0 1 0" />
+                  <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="3" />
+                  <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                </filter>
+                <filter id="inset-shadow-small" x="-50%" y="-50%" width="200%" height="200%">
+                <feComponentTransfer in="SourceAlpha">
+                  <feFuncA type="table" tableValues="1 0" />
+                </feComponentTransfer>
+                <feGaussianBlur stdDeviation="3"/>
+                <feOffset dx="3" dy="3" result="offsetblur"/>
+                <feFlood flood-color="rgb(0, 0, 0)" result="color"/>
+                <feComposite in2="offsetblur" operator="in"/>
+                <feComposite in2="SourceAlpha" operator="in" />
+                <feMerge>
+                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode />
+                </feMerge>
+              </filter>
+              <filter id="inset-shadow-normal" x="-50%" y="-50%" width="200%" height="200%">
+                <feComponentTransfer in="SourceAlpha">
+                  <feFuncA type="table" tableValues="1 0" />
+                </feComponentTransfer>
+                <feGaussianBlur stdDeviation="8"/>
+                <feOffset dx="4" dy="4" result="offsetblur"/>
+                <feFlood flood-color="rgb(0, 0, 0)" result="color"/>
+                <feComposite in2="offsetblur" operator="in"/>
+                <feComposite in2="SourceAlpha" operator="in" />
+                <feMerge>
+                  <feMergeNode in="SourceGraphic" />
+                  <feMergeNode />
+                </feMerge>
+              </filter>
+                
+              </defs>
+            
+              <g
+                id="layer1">
+                <text
+                  xml:space="preserve"
+                  style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.1008px;font-family:Quicksand;fill:#ffffff;fill-opacity:1;stroke-width:0.0526088"
+                  x="135.128502"
+                  y="164.39116"
+                  text-anchor="end"
+                  id="text2679-4">dhsgfhksdg</text>
+                </g>
+            </svg>
+          </div>
+          <div class="gameMessagesWrapper">
+          <span class="gameMessages" id="gameMessages"></span>      
+        </div>
       </div>
-    </div>
       <style>
         #map {
             height: 75dvh;
@@ -234,9 +250,13 @@
     
     
     </style>
-        <div id="map"></div> 
+        <div id="map">
+          <button class="dropButton" onclick="handleDrop()">Drop here!</button>
+        </div> 
          <span class="locationMessages" id="locationMessages"></span>
       </div>
+    </div>
+      
     </div>
   
 </div>
@@ -245,9 +265,12 @@
   <script src="icon.js"></script>
   <script src="leafletmap/leaflet.js"></script>
   <script src="leafmap.js"></script>
+  <script src="leaderboard.js"></script>
+  <script src="positions.js"></script>
   <script type="module">
     import { ethers } from "./ethers.min.js";
     window.ethers = ethers;
+    LeaderBoard.init();
   </script>
 </body>
 </html>

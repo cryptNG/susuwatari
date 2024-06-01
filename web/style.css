@@ -238,3 +238,24 @@ button {
 animation: moveUp 2s forwards;
 animation-delay: 4.5s;
 }
+
+.dropButton {
+    position: absolute;
+    bottom: 0;
+    left: calc(50% - 3.5em);
+    width: 7em;
+    z-index: 1000;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+    bottom: 2dvh;
+    background: #5E5DF0;
+    border-radius: 999px;
+    box-shadow: #5E5DF0 0 10px 20px -10px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+
+}
