@@ -20,17 +20,18 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
 
 
     event DroppedSusu(
-        uint64 originLocation,
-        uint64 currentLocation,
-        uint64 destination,
+        uint256 originLocation,
+        uint256 currentLocation,
+        uint256 destination,
         uint256 tokenId,
-        uint256 team
+        uint8 team,
+        string message
     );
 
     
 event MintedSusu(uint256 tokenId, string message, address owner, uint8 team);
 
-event PickedUpSusu(uint256 tokenId, uint64 location, string message, address sender, address owner, uint8 team);
+event PickedUpSusu(uint256 tokenId, uint256 location, string message, address sender, address owner, uint8 team);
 
     
     function registerMe(uint8 team) external {
@@ -39,31 +40,41 @@ event PickedUpSusu(uint256 tokenId, uint64 location, string message, address sen
         emit MintedSusu(tokenId, message, owner, setteam);
     }
 
-    function aimInitialSusu(
-        uint256 tokenId,
-        uint64 location,
-        uint64 destination,
-        string memory message
-    ) external returns (uint256, uint64, uint64, string memory) {
-        return
-            LibSusuwatari.aimInitialSusu(
-                susu(),
-                tokenId,
-                location,
-                destination,
-                message
-            );
-    }
-
-  function dropSusu(uint256 tokenId, uint64 location) external {
-        (uint64 originLocation, uint64 currentLocation, uint64 destination, uint256 rettokenId, uint8 team) = LibSusuwatari.dropSusu(susu(), tokenId, location);
+    
+function aimInitialSusu(
+    uint256 tokenId,
+    uint256 location,
+    uint256 destination,
+    string memory message
+) external {
+    
+    (
+        uint256 rettokenId, 
+        uint256 retlocation, 
+        uint256 retdestination, 
+        string memory retmessage, 
+        uint8 team
+    ) = LibSusuwatari.aimInitialSusu(
+        susu(),
+        tokenId,
+        location,
+        destination,
+        message
+    );
         
-        emit DroppedSusu(originLocation, currentLocation, destination, rettokenId, team);
+    emit DroppedSusu(retlocation, retlocation, retdestination, rettokenId, team, retmessage);
+     
+}
+
+  function dropSusu(uint256 tokenId, uint256 location) external {
+        (uint256 originLocation, uint256 currentLocation, uint256 destination, uint256 rettokenId, uint8 team, string memory message) = LibSusuwatari.dropSusu(susu(), tokenId, location);
+        
+        emit DroppedSusu(originLocation, currentLocation, destination, rettokenId, team, message);
     }
     
   
-    function tryPickupSusu(uint256 tokenId, uint64 location) external {
-        (uint256 rettokenId, uint64 retlocation, string memory message, address sender, address owner, uint8 team) = LibSusuwatari.tryPickupSusu(susu(), tokenId, location);
+    function tryPickupSusu(uint256 tokenId, uint256 location) external {
+        (uint256 rettokenId, uint256 retlocation, string memory message, address sender, address owner, uint8 team) = LibSusuwatari.tryPickupSusu(susu(), tokenId, location);
      
         emit PickedUpSusu(rettokenId, retlocation, message, sender, owner, team);
     }

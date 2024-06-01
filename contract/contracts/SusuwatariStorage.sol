@@ -34,9 +34,9 @@ struct LeafWalletStorage {
 
     struct Susu {
         uint256 tokenId;
-        uint64 originLocation;
-        uint64 currentLocation;
-        uint64 destination;
+        uint256 originLocation;
+        uint256 currentLocation;
+        uint256 destination;
         string message;
         address carrier;
         uint256 dropCooldownTime;
@@ -51,7 +51,6 @@ struct LeafWalletStorage {
         bool isInitialized;
         mapping(uint256 => address) baggedSusus; 
     }
-
 
 
 
