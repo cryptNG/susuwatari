@@ -53,24 +53,43 @@ let LibwalletMobileService = {
       throw err;
     }
   },
+
+  async makeNewSusu() {
+    try {
+      const tx = await this.contract.giveSusuwatari();
+      await tx.wait();
+      console.log('Transaction completed:', tx);
+      return tx;
+    } catch (err) {
+      console.error('Error aiming initial susu:', err);
+      throw err;
+    }
+  },
   
     get isNewSusu() {
       return this.currentState.slot.ownerAddress === this.connectedWallet.address;
     },
 
     get isCarryingSusu() {
-      if(this.currentState.slot.susuTokenId > 0){
-        return this.currentState.slot.susuTokenId
+      if(!this.isNewSusu && this.currentState.slot.susuTokenId > 0){
+        return true;
       }
+
+      return false;
     },
 
     get isPickingSusu(){
-      return this.currentState.slot.susuTokenId <= 0
+      return this.currentState.slot.susuTokenId <= 0;
     },
 
     get adress() {
       return this.connectedWallet.address;
     },
+
+    get susuTokenId(){
+      return this.currentState.slot.susuTokenId;
+    },
+    
     async checkWalletRegistered() {
       let hasChecked = false;      
       while (!hasChecked) {

@@ -22,6 +22,29 @@ function calculateDistance(pos1,pos2){
     return dist;
   }
 
+  -5.567466734685
+
+  84.4435463364
+
+
+
+function encodeCoordinates(pos){
+    
+    const latBig = Math.round((pos.lat+90) * 100000) * 10000000000;
+    const lon = Math.round((pos.lon+180) * 100000);
+
+    return BigInt(latBig + lon);
+}
+
+function decodeCoordinates(encCoord){
+    
+    const latLon =Math.trunc( encCoord / 10000000000) ;
+
+    const lonLon =encCoord - (latLon * 10000000000);
+
+    return {lat:(latLon/100000)-90, lon:(lonLon/100000)-180};
+}
+
 function getSpotIdForCoordinates(pos,log = false)
   {
     if(log) console.log("pos.lat "+pos.lat);

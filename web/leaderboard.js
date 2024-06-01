@@ -29,7 +29,9 @@ const LeaderBoard = {
     },
     async autoRefreshDropEvents (){
 
-  
+        let lastFromBlock=0;
+        let lastToBlock=0;
+
         while(this.refresh){
 
             if(LibwalletMobileService.isLoaded){
@@ -37,9 +39,10 @@ const LeaderBoard = {
                     const eventFilter = LibwalletMobileService.contract.filters.DroppedSusu();
             
                     let blockStep = 500;
-                    eventFilter.toBlock=await LibwalletMobileService.provider.getBlockNumber();
-                    eventFilter.fromBlock=eventFilter.toBlock - blockStep > 0 ? eventFilter.toBlock - blockStep:0;
-                    while(eventFilter.toBlock!==0 && blockStep>0)
+                    const maxToBlock =await LibwalletMobileService.provider.getBlockNumber();
+                    eventFilter.fromBlock=lastToBlock;
+                    eventFilter.toBlock= (lastToBlock+blockStep)>maxToBlock?maxToBlock:lastToBlock+blockStep;
+                    while(eventFilter.fromBlock!==maxToBlock && blockStep>0)
                     {
                         try{
                             const logs = await LibwalletMobileService.provider.getLogs(eventFilter);
@@ -48,7 +51,7 @@ const LeaderBoard = {
                                 logs.forEach((log)=>{
 
                                     const decLog = LibwalletMobileService.contract.interface.parseLog(log)
-                                    if(decLog.name==='DroppedSusu'){
+                                    if(decLog?.name==='DroppedSusu'){
                                         const data = LibwalletMobileService.interface.decodeEventLog("DroppedSusu",log.data);
                                      //   console.log(data);
                                         this.events.push({
@@ -61,13 +64,12 @@ const LeaderBoard = {
                                     }
                                 });
                             }
-                    
-                            eventFilter.toBlock=eventFilter.fromBlock;
-                            eventFilter.fromBlock = eventFilter.toBlock - blockStep > 0 ? eventFilter.toBlock - blockStep:0;
+                            lastToBlock=eventFilter.toBlock;
+                            eventFilter.toBlock=(lastToBlock+blockStep)>maxToBlock?maxToBlock:lastToBlock+blockStep;
+                            eventFilter.fromBlock = lastToBlock;
                             
                         }catch(exc){
                             blockStep=blockStep>0?blockStep-100:blockStep;
-                            eventFilter.fromBlock = eventFilter.toBlock - blockStep > 0 ? eventFilter.toBlock - blockStep:0;
                         }
                     }
                 }catch(e){
@@ -75,27 +77,7 @@ const LeaderBoard = {
                 }
             }
 
-            const tokenId=Math.trunc((Math.random()*100)) % 30;
-            const pos1 ={
-                lat:Math.trunc((Math.random()*180 - 90) * 100000)/100000,
-                lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
-            }
-            const pos2 ={
-                lat:pos1.lat + Math.trunc((Math.random()*180 - 90) * 1000)/100000,
-                lon:pos1.lon + Math.trunc((Math.random()*360 - 180) * 1000)/100000,
-            }
-            const pos3 ={
-                lat:pos1.lat + Math.trunc((Math.random()*180 - 90) * 1000)/100000,
-                lon:pos1.lon + Math.trunc((Math.random()*360 - 180) * 1000)/100000,
-            }
-            this.events.push({
-                origin:getSpotIdForCoordinates(pos1)+'',
-                current:getSpotIdForCoordinates(pos2)+'',
-                destination:getSpotIdForCoordinates(pos3)+'',
-                tokenId:tokenId,
-                team:tokenId % 2
-
-            });
+           
             await timeout(1000);
         }
     },
@@ -116,8 +98,8 @@ const LeaderBoard = {
 
             let teamAPoints = BigInt(0);
             teamGroups[0].forEach((event)=>{
-                const maxPoints = Math.trunc(Math.abs(event.destination - event.origin) / 10000);
-                const lostPoints = Math.trunc(Math.abs(event.destination - event.current) / 10000);
+                const maxPoints = Math.trunc(Math.abs(Number(event.destination - event.origin)) / 10000);
+                const lostPoints = Math.trunc(Math.abs(Number(event.destination - event.current)) / 10000);
                 const realizedPoints = maxPoints - lostPoints;
                 const pointsToAdd = BigInt((realizedPoints>0)? realizedPoints:0);
                 teamAPoints = teamAPoints + pointsToAdd;
@@ -125,8 +107,8 @@ const LeaderBoard = {
 
             let teamBPoints = BigInt(0);
             teamGroups[1].forEach((event)=> {
-                const maxPoints = Math.trunc(Math.abs(event.destination - event.origin) / 10000);
-                const lostPoints = Math.trunc(Math.abs(event.destination - event.current) / 10000);
+                const maxPoints = Math.trunc(Math.abs(Number(event.destination - event.origin)) / 10000);
+                const lostPoints = Math.trunc(Math.abs(Number(event.destination - event.current)) / 10000);
                 const realizedPoints = maxPoints - lostPoints;
                 const pointsToAdd = BigInt((realizedPoints>0)? realizedPoints:0);
                 teamBPoints = teamBPoints + pointsToAdd;
@@ -152,8 +134,18 @@ const LeaderBoard = {
 
             if(teamAPoints>teamBPoints){
                 document.querySelector('.leader-board .team-a').classList.add('winner');
-            }else{
+            }
+            if(teamAPoints<teamBPoints){
                 document.querySelector('.leader-board .team-b').classList.add('winner');
+            }
+
+            if(teamAPoints===teamBPoints){
+                const coin = Math.trunc(Math.random()*10) % 2;
+                if(coin === 0){
+                document.querySelector('.leader-board .team-b').classList.add('winner');
+                }else{
+                document.querySelector('.leader-board .team-a').classList.add('winner');
+                }
             }
 
             await timeout(1000);
