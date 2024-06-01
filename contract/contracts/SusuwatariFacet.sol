@@ -32,23 +32,24 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
 
     function dropSusu(
         uint256 tokenId,
-        string memory location,
-        string memory destination,
-        string memory message
-    ) external returns (uint256, string memory, string memory, string memory) {
-        return LibSusuwatari.dropSusu(susu(), tokenId, location, destination, message);
+        string memory location
+    ) external returns (uint256, string memory) {
+        return LibSusuwatari.dropSusu(susu(), tokenId, location);
     }
 
     function tryPickupSusu(
         uint256 tokenId,
-        string memory location,
-        string memory destination,
-        string memory message
-    ) external returns (uint256, string memory, string memory, string memory) {
-        return LibSusuwatari.tryPickupSusu(susu(), tokenId, location, destination, message);
+        string memory location
+    ) external returns (uint256, string memory) {
+        return LibSusuwatari.tryPickupSusu(susu(), tokenId, location);
     }
 
     function getCurrentState() external view returns (UserState memory) {
         return LibSusuwatari.getCurrentState(susu());
     }
+
+    function giveSusuwatari() external {
+    LibSusuwatari.giveSusuwatari(susu());
+}
+
 }
