@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
     
         // Get the user's current position and selected position
         const { center, userLatLng } = await selectedPosition();
-    
+     
         // Calculate spot IDs for both locations
         const location = getSpotIdForCoordinates(userLatLng);
         const destination = getSpotIdForCoordinates(center);
