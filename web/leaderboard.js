@@ -42,21 +42,23 @@ const LeaderBoard = {
                     while(eventFilter.toBlock!==0 && blockStep>0)
                     {
                         try{
-                            const logs = await this.provider.getLogs(eventFilter);
+                            const logs = await LibwalletMobileService.provider.getLogs(eventFilter);
                             if(logs.length>0)
                             {
                                 logs.forEach((log)=>{
-                                    const data = LibwalletMobileService.interface.decodeEventLog("DroppedSusu",logs[0].data);
-                                })
-                                console.debug(logs);
-                                const data = LibwalletMobileService.interface.decodeEventLog("DroppedSusu",log.data);
-                                console.log(data);
-                                this.events.push({
-                                    origin:data.origin,
-                                    current:data.current,
-                                    destination:data.destination,
-                                    tokenId:data.tokenId,
-                                    team:data.team
+
+                                    const decLog = LibwalletMobileService.contract.interface.parseLog(log)
+                                    if(decLog.name==='DroppedSusu'){
+                                        const data = LibwalletMobileService.interface.decodeEventLog("DroppedSusu",log.data);
+                                        console.log(data);
+                                        this.events.push({
+                                            origin:data.originLocation,
+                                            current:data.currentLocation,
+                                            destination:data.destination,
+                                            tokenId:data.tokenId,
+                                            team:data.team
+                                        });
+                                    }
                                 });
                             }
                     
