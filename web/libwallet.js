@@ -6,6 +6,7 @@ let LibwalletMobileService = {
     isReady: false,
     isRegistered: false,
     isNewUser: false,
+    isLoaded:false,
     curretnState: {},
     oldMessage: '',
     lastMessage: '',
@@ -15,6 +16,7 @@ let LibwalletMobileService = {
     connectedWallet: null,
     contractAddress: '',
     contractAbi: '',
+    interface: null,
     jsonRpcUrl: '',
     chainId: null,
     
@@ -22,6 +24,7 @@ let LibwalletMobileService = {
     setup(contractAddress, jsonRpcUrl, contractAbi) {
       this.contractAddress = contractAddress;
       this.contractAbi = contractAbi;
+      this.interface = new window.ethers.Interface(this.contractAbi);
       try {
         // Set up provider
         if (!window.ethers) {
@@ -55,6 +58,16 @@ let LibwalletMobileService = {
       return this.currentState.slot.ownerAddress === this.connectedWallet.address;
     },
 
+    get isCarryingSusu() {
+      if(this.currentState.slot.susuTokenId > 0){
+        return this.currentState.slot.susuTokenId
+      }
+    },
+
+    get isPickingSusu(){
+      return this.currentState.slot.susuTokenId <= 0
+    },
+
     get adress() {
       return this.connectedWallet.address;
     },
@@ -67,7 +80,7 @@ let LibwalletMobileService = {
             this.isRegistered = await this.contract.isSenderRegistered({ from: this.connectedWallet.address });
             hasChecked = true;
           } catch (e) {
-            await timeout(2000 + debounce);
+            await timeout(2000 );
           }
         } else await timeout(100);
       }
@@ -108,31 +121,6 @@ async getCurrentState() {
       return this.currentState;
     },
 
-
-    async checkData() {
-      let debounce = 1;
-      while (true) {
-        if (this.connectedWallet !== null) {
-          try {
-            // Call the contract function
-            const oldMessage = await this.contract.getData({ from: this.connectedWallet.address });
-            if (this.oldMessage !== oldMessage) {
-              debounce = 1;
-            }
-            this.oldMessage = oldMessage;
-            await timeout(2000 + debounce);
-            debounce += debounce;
-          } catch (e) {
-            await timeout(2000 + debounce);
-          }
-        } else await timeout(100);
-      }
-    },
-  
-    async getData() {
-      this.oldMessage = await this.contract.getData({ from: this.connectedWallet.address });
-      this.lastMessage = "Got fresh data from blockchain";
-    },
   
     async createWallet() {
       // Generate new wallet
@@ -163,6 +151,7 @@ async getCurrentState() {
                 this.contractAbi,
                 this.connectedWallet
               );
+              this.isLoaded=true;
               this.getBalance();
               resolve(wallet);
             } else {
@@ -257,6 +246,20 @@ async getCurrentState() {
       return this.deviceWalletBalance = await this.provider.getBalance(this.connectedWallet.address) / BigInt(10 ** 18);
     },
   
+    async getAllSusuwataris() {
+      try {
+          if (!this.contract) {
+              throw new Error("Contract is not set up. Please set up the contract first.");
+          }
+          // Call the contract method
+          const susuwataris = await this.contract.getAllSusuwataris();
+          return susuwataris;
+      } catch (err) {
+          console.error('Error fetching Susuwataris:', err);
+          throw err;
+      }
+  },
+
     async assignData(message) {
       let success = false;
   
@@ -276,6 +279,8 @@ async getCurrentState() {
       return success;
     }
   };
+
+  
 
   window.LibwalletMobileService = LibwalletMobileService;
   

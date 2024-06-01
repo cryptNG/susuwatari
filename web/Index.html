@@ -26,10 +26,10 @@
       <div class="flip-card-back">
         <div class="pane" id="leader-board-pane">
           <div class="leader-board">
-            <ul>
-              <li class="team-a"><span class="caption">Team A: </span><span class="points"></span></li>
-              <li class="team-b"><span class="caption">Team A: </span><span class="points"></span></li>
-            </ul>
+            <div class="teams">
+              <div class="team team-a"><span class="caption">Team A: </span><span class="points"></span></div>
+              <div class="team team-b"><span class="caption">Team B: </span><span class="points"></span></div>
+            </div>
           </div>
         </div>
         <div class="pane active" id="game-pane">
@@ -140,8 +140,9 @@
       </div>
       <style>
         #map {
-            height: 75dvh;
-            width: 100%;
+          height: 70dvh;
+          width: 100%;
+          border-radius: 0 0 20px 20px;
         }
     
         .leaflet-top .leaflet-control {
@@ -252,9 +253,6 @@
     </style>
         <div id="map">
           <button class="dropButton">Drop here!</button>
-        </div> 
-         <span class="locationMessages" id="locationMessages"></span>
-      </div>
     </div>
       
     </div>
