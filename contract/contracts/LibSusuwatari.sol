@@ -150,34 +150,41 @@ library LibSusuwatari {
 
         UserState memory state = UserState({
             ownedTokens: ownedTokens,
-            slot: slot
+            slot: slot,
+            team: sus.ownerToTeam[msg.sender]
         });
 
         return state;
     }
 
-    function registerMe(SusuwatariStorage storage sus) internal {
-        require(sus.maxSlotCount[msg.sender] == 0, "User already registered");
+function registerMe(SusuwatariStorage storage sus, uint8 team) internal 
+returns (uint256, string memory, address,uint8)
+{
+    require(sus.maxSlotCount[msg.sender] == 0, "User already registered");
 
-        Susu memory newSusu = Susu({
-            tokenId: sus.susuOwners.length + 1,
-            dropCooldownTime: 0,
-            originLocation: 0,
-            currentLocation: 0,
-            destination: 0,
-            message: "",
-            carrier: msg.sender
-        });
+    Susu memory newSusu = Susu({
+        tokenId: sus.susuOwners.length + 1,
+        dropCooldownTime: 0,
+        originLocation: 0,
+        currentLocation: 0,
+        destination: 0,
+        message: "",
+        carrier: msg.sender
+    });
 
-        sus.maxSlotCount[msg.sender] = 1;
-        sus.susuOwners.push(msg.sender);
-        sus.tokenIdToSusu[newSusu.tokenId] = newSusu;
-        sus.baggedSusus[newSusu.tokenId] = msg.sender;
-    }
+    sus.maxSlotCount[msg.sender] = 1;
+    sus.ownerToTeam[msg.sender] = team;
+    sus.susuOwners.push(msg.sender);
+    sus.tokenIdToSusu[newSusu.tokenId] = newSusu;
+    sus.baggedSusus[newSusu.tokenId] = msg.sender;
 
+
+        return (newSusu.tokenId, newSusu.message, newSusu.carrier, team);
+}
     function giveSusuwatari(
         SusuwatariStorage storage sus
-    ) internal isUserRegistered(sus) mustNotCarrySusu(sus) {
+    ) internal isUserRegistered(sus) mustNotCarrySusu(sus) 
+    returns (uint256, string memory, address, uint8){
         Susu memory newSusu = Susu({
             tokenId: sus.susuOwners.length + 1,
             dropCooldownTime: 0,
@@ -191,6 +198,10 @@ library LibSusuwatari {
         sus.susuOwners.push(msg.sender);
         sus.tokenIdToSusu[newSusu.tokenId] = newSusu;
         sus.baggedSusus[newSusu.tokenId] = msg.sender;
+
+    uint8 team = sus.ownerToTeam[msg.sender];
+        
+        return (newSusu.tokenId, newSusu.message, msg.sender, team);
     }
 
     function aimInitialSusu(
@@ -234,7 +245,7 @@ library LibSusuwatari {
         isUserRegistered(sus)
         mustExistSusu(sus, tokenId)
         mustCarrySusu(sus, tokenId)
-        returns (uint256, uint64)
+        returns (uint64, uint64, uint64, uint256, uint8)
     {
         Susu storage susu = sus.tokenIdToSusu[tokenId];
 
@@ -243,42 +254,51 @@ library LibSusuwatari {
         susu.carrier = address(0);
         sus.baggedSusus[tokenId] = address(0);
         sus.tokenIdToSusu[tokenId] = susu;
-        return (tokenId, location);
+
+       
+
+
+        return (susu.originLocation, susu.currentLocation, susu.destination, tokenId,sus.ownerToTeam[msg.sender]);
+   
     }
 
-    function tryPickupSusu(
-        SusuwatariStorage storage sus,
-        uint256 tokenId, //auto-ermitteln
-        uint64 location
-    )
-        internal
-        isUserRegistered(sus)
-        mustExistSusu(sus, tokenId)
-        mustNotCarrySusu(sus)
-        isNotBeingCarriedSusu(sus, tokenId)
-        cannotBeOwner(sus, tokenId)
-        returns (uint256, uint64)
-    {
-        Susu storage susu = sus.tokenIdToSusu[tokenId];
+function tryPickupSusu(
+    SusuwatariStorage storage sus,
+    uint256 tokenId, //auto-ermitteln
+    uint64 location
+)
+    internal
+    isUserRegistered(sus)
+    mustExistSusu(sus, tokenId)
+    mustNotCarrySusu(sus)
+    isNotBeingCarriedSusu(sus, tokenId)
+    cannotBeOwner(sus, tokenId)
+    returns (uint256, uint64, string memory, address, address, uint8)
+{
+    Susu storage susu = sus.tokenIdToSusu[tokenId];
 
-        require(
-            susu.currentLocation == location,
-            "Caller is not in the correct location"
-        );
+    require(
+        susu.currentLocation == location,
+        "Caller is not in the correct location"
+    );
 
-        susu.dropCooldownTime =
-            300 +
-            (uint256(
-                keccak256(
-                    abi.encodePacked(block.timestamp, msg.sender, tokenId)
-                )
-            ) % 301);
-        susu.carrier = msg.sender;
-        sus.baggedSusus[tokenId] = msg.sender;
-        sus.tokenIdToSusu[tokenId] = susu;
+    susu.dropCooldownTime =
+        300 +
+        (uint256(
+            keccak256(
+                abi.encodePacked(block.timestamp, msg.sender, tokenId)
+            )
+        ) % 301);
+    susu.carrier = msg.sender;
+    sus.baggedSusus[tokenId] = msg.sender;
+    sus.tokenIdToSusu[tokenId] = susu;
 
-        return (tokenId, location);
-    }
+    uint8 team = sus.ownerToTeam[sus.susuOwners[tokenId]];
+
+
+        return (tokenId, location, susu.message, msg.sender, sus.susuOwners[tokenId], team);
+   
+}
 
     function getAllSusuwataris(
         SusuwatariStorage storage sus
