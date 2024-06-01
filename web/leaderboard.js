@@ -29,18 +29,18 @@ const LeaderBoard = {
     },
 
     get susus(){
-        const susuwataris = this.tokens;
-        let susus=susuwataris.values().map((susu)=>{
-         
-          susu.posOrigin = decodeCoordinates(susu.origin);
-          susu.posCurrent = decodeCoordinates(susu.current);
-          susu.posDestination = decodeCoordinates(susu.destination);
+ 
+        const sususWithOwner = [...this.tokens.values()].map((susu)=>{
+            susu.ownerAddress =window.allSusuwataris.find((_susu)=>susu.tokenId===_susu.tokenId).owner;
+            susu.posOrigin = decodeCoordinates(susu.origin);
+            susu.posCurrent = decodeCoordinates(susu.current);
+            susu.posDestination = decodeCoordinates(susu.destination);
+            susu.currentSpotId=getSpotIdForCoordinates(susu.posCurrent);
+            return susu;
+  
+          })
 
-          return susu;
-        
-        });
-
-        return [...susus];
+        return sususWithOwner;
     },
     async autoRefreshDropEvents (){
 

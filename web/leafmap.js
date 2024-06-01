@@ -38,6 +38,7 @@ const panToUserLocation = () => {
 };
 
 let userPosition = null;
+let userSpotId = null;
 
 const updatePositionPeriodically = async () => {
   while (true) {
@@ -46,6 +47,9 @@ const updatePositionPeriodically = async () => {
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition((position) => {
                   userPosition = [position.coords.latitude, position.coords.longitude];
+                  userSpotId=getSpotIdForCoordinates({lat:userPosition[0],lon:userPosition[1]});
+                  //map.panTo(userLatLng);
+
               });
           }
           resolve();
@@ -115,8 +119,8 @@ function updatePositionEvent(susus)  {
       div.innerHTML = html;
       L.DomEvent.on(div, 'click', handleCacheClick.bind(this, susu));
       let cacheElement = document.getElementById(susu.tokenId + '-author');
-      const BigIntAdress = BigInt(susu.ownerAddress);
-      const uniqueIconSeed = BigIntAdress ^ BigInt(susu.tokenId);
+      const BigIntAddress = BigInt(susu.ownerAddress);
+      const uniqueIconSeed = xorExtendedBigInt( BigIntAddress , BigInt(susu.tokenId));
       let hexSeed = uniqueIconSeed.toString(16);
       const iconGenerator = new Icon(hexSeed, cacheElement);
       iconGenerator.generateIcon();
@@ -155,6 +159,9 @@ function createSusuElementHtml(cache, cacheId) {
     </div>
   `;
 }
+function lerp(start, end, t) {
+  return start * (1 - t) + end * t;
+}
 
 function getIconSizeBasedOnZoom(zoom) {
   const START_ZOOM = 15; // At this zoom, the size is 0x0
@@ -170,19 +177,19 @@ function getIconSizeBasedOnZoom(zoom) {
   // Normalize zoom level to a value between 0 and 1
   let t = (zoom - START_ZOOM) / (END_ZOOM - START_ZOOM);
 
-  let sizeValue = this.lerp(MIN_SIZE, MAX_SIZE, t);
+  let sizeValue = lerp(MIN_SIZE, MAX_SIZE, t);
 
   return { width: sizeValue, height: sizeValue };
 }
 
-function updateCachePositions(callback) {
+function updateCachePositions(susus,callback) {
   let currentZoom = map.getZoom();
   let iconSize = getIconSizeBasedOnZoom(currentZoom);
 
-  LeaderBoard.susus.forEach(cache => {
+  susus.forEach(susu => {
 
-    const position = map.latLngToLayerPoint([cache.lat, cache.lon]);
-    const div = document.getElementById(cache.tokenId_BN);
+    const position = map.latLngToLayerPoint([susu.posCurrent.lat, susu.posCurrent.lon]);
+    const div = document.getElementById(susu.tokenId);
     
     if (div) {
       L.DomUtil.setPosition(div, position);
@@ -312,4 +319,28 @@ function getIconSvg(id, width, height)
       id="text2679-4">dhsgfhksdg</text>
    </g>
 </svg>`;
+}
+
+function xorExtendedBigInt(longBigInt, shortBigInt) {
+  // Convert BigInts to binary strings
+  let longBinStr = longBigInt.toString(2);
+  let shortBinStr = shortBigInt.toString(2);
+
+  // Extend the short binary string to match the length of the long binary string
+  let extendedShortBinStr = '';
+  while (extendedShortBinStr.length < longBinStr.length) {
+      extendedShortBinStr += shortBinStr;
+  }
+
+  // Trim the extended short binary string to exactly match the length of the long binary string
+  extendedShortBinStr = extendedShortBinStr.slice(0, longBinStr.length);
+
+  // Perform the XOR operation
+  let xorBinStr = '';
+  for (let i = 0; i < longBinStr.length; i++) {
+      xorBinStr += (longBinStr[i] === extendedShortBinStr[i]) ? '0' : '1';
+  }
+
+  // Convert the resulting binary string back to a BigInt
+  return BigInt('0b' + xorBinStr);
 }

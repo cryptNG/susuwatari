@@ -807,16 +807,20 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
       document.querySelector('#game-pane').classList.remove('pick-susu');
       document.querySelector('#game-pane').classList.remove('carry-susu');
 
+      window.allSusuwataris = await LibwalletMobileService.getAllSusuwataris();
+
       if(map) map.off('moveend', updateCachePositions);
 
     lastChangeState = window.changeState;
     await LibwalletMobileService.getCurrentState();
     console.log('Current State:', LibwalletMobileService.currentState);
 
+    updatePositionPeriodically();
+    
     if(LibwalletMobileService.isNewSusu) {
       document.querySelector('#game-pane').classList.add('drop-susu');
-      const BigIntAdress = BigInt(LibwalletMobileService.adress);
-      const uniqueIconSeed = BigIntAdress ^ BigInt(LibwalletMobileService.currentState.slot.susuTokenId);
+      const BigIntAddress = BigInt(LibwalletMobileService.address);
+      const uniqueIconSeed = xorExtendedBigInt( BigIntAddress , BigInt(LibwalletMobileService.currentState.slot.susuTokenId));
       let hexSeed = uniqueIconSeed.toString(16);
       const iconGenerator = new Icon(hexSeed, document.querySelector('.newSusu svg'));
       iconGenerator.generateIcon();
@@ -827,7 +831,7 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
      
       await displayGameMessage("Please choose its destination!");
       document.querySelector('.dropButton').style.display = 'block';
-      updatePositionPeriodically();
+      
 
       map.on('move', async () => {
         try {
@@ -862,34 +866,22 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
      
 
       try {
-        const susuwataris = await LibwalletMobileService.getAllSusuwataris();
-        const sususWithOwner = LeaderBoard.susus.map((susu)=>{
-          susu.ownerAddress =susuwataris.find((_susu)=>susu.tokenId===_susu.tokenId).owner;
-
-        })
-
+   
         updatePositionEvent(LeaderBoard.susus);
 
-        console.log('All Susuwataris:', susuwataris);
+        updateCachePositions(LeaderBoard.susus,showCaches.bind(this));
+
+        tryPickSusu();
+
     } catch (err) {
         console.error('Error fetching Susuwataris:', err);
     }
 
-    showCaches=()=> {
-      let caches = document.querySelectorAll('.inmap-cache');
-      caches.forEach(cache => {
-        cache.classList.remove('hidden');
-        cache.classList.remove('animate-fade-in'); // Remove the animation class
-        
-        // Force a reflow. This is synchronous and will cause a layout
-        void cache.offsetWidth;
-  
-        cache.classList.add('animate-fade-in'); // Re-add the animation class
-      });
-    }
-
+   
     map.on('moveend', () => {
-        window.requestAnimationFrame(updateCachePositions.bind(this));
+        window.requestAnimationFrame(()=>{
+          updateCachePositions(LeaderBoard.susus,showCaches.bind(this));
+        });
       });
 
       
@@ -897,7 +889,7 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
 
       map.on('zoomend', () => {
         window.requestAnimationFrame(() => {
-            updateCachePositions(showCaches.bind(this));
+            updateCachePositions(LeaderBoard.susus,showCaches.bind(this));
         });
     });
     }
@@ -915,3 +907,39 @@ loadGame();
 initMap();
 panToUserLocation();
 });
+
+showCaches=()=> {
+  let caches = document.querySelectorAll('.inmap-cache');
+  caches.forEach(cache => {
+    cache.classList.remove('hidden');
+    cache.classList.remove('animate-fade-in'); // Remove the animation class
+    
+    // Force a reflow. This is synchronous and will cause a layout
+    void cache.offsetWidth;
+
+    cache.classList.add('animate-fade-in'); // Re-add the animation class
+  });
+}
+
+hideCaches=() =>{
+  let caches = document.querySelectorAll('.inmap-cache');
+  caches.forEach(cache => {
+    cache.classList.add('hidden');
+  });
+}
+
+async function tryPickSusu(){
+  while(window.refresh && LibwalletMobileService.isPickingSusu){
+    for(let i=0;i<LeaderBoard.susus.length;i++){
+      if(LeaderBoard.susus[i].currentSpotId === userSpotId && LeaderBoard.susus[i].ownerAddress !== LibwalletMobileService.address){
+        console.log('try pick susu:'+LeaderBoard.susus[i].tokenId);
+        await LibwalletMobileService.tryPickupSusu(LeaderBoard.susus[i].tokenId);
+        window.changeState++;
+        await timeout(1000);
+        break;
+      }
+      
+    }
+    await timeout(100);
+  }
+}

@@ -17,7 +17,9 @@ class Icon {
     let s='';
     for(let i=0;i<40;i=i+2)
     {
-      s=s+ (Number('0x'+address[i])).toString(16);
+      if(address.length<i+1){
+        s=s+'0';
+      }else s=s+ (Number('0x'+address[i])).toString(16);
 
     }
   
