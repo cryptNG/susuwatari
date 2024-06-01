@@ -14,7 +14,6 @@ import {UsingDiamondOwner} from "hardhat-deploy/solc_0.8/diamond/UsingDiamondOwn
  * {ERC721Enumerable}.
  */
 
-
 contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
     using Address for address;
     using Strings for uint256;
@@ -29,7 +28,14 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
         string memory destination,
         string memory message
     ) external returns (uint256, string memory, string memory, string memory) {
-        return LibSusuwatari.aimInitialSusu(susu(), tokenId, location, destination, message);
+        return
+            LibSusuwatari.aimInitialSusu(
+                susu(),
+                tokenId,
+                location,
+                destination,
+                message
+            );
     }
 
     function dropSusu(
@@ -51,16 +57,22 @@ contract SusuwatariFacet is StorageHandler, UsingDiamondOwner {
     }
 
     function giveSusuwatari() external {
-    LibSusuwatari.giveSusuwatari(susu());
-}
+        LibSusuwatari.giveSusuwatari(susu());
+    }
 
-function getAllSusuwataris() external view returns (LibSusuwatari.SusuwatariInfo[] memory) {
-    return LibSusuwatari.getAllSusuwataris(susu());
-}
+    function getAllSusuwataris()
+        external
+        view
+        returns (LibSusuwatari.SusuwatariInfo[] memory)
+    {
+        return LibSusuwatari.getAllSusuwataris(susu());
+    }
 
-function getBaggedSusus() external view returns (LibSusuwatari.BaggedSusuInfo[] memory) {
-    return LibSusuwatari.getBaggedSusus(susu());
-}
-
-
+    function getBaggedSusus()
+        external
+        view
+        returns (LibSusuwatari.BaggedSusuInfo[] memory)
+    {
+        return LibSusuwatari.getBaggedSusus(susu());
+    }
 }
