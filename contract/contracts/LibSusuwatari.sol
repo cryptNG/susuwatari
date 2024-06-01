@@ -48,22 +48,22 @@ library LibSusuwatari{
 
 
 modifier isUserRegistered(SusuwatariStorage storage sus){
-    //   require(sus.maxSlotCount[msg.sender] > 0, "User is not registered"); 
+       require(sus.maxSlotCount[msg.sender] > 0, "User is not registered"); 
           _;
 }
 
-    modifier mustNotCarrySusu(SusuwatariStorage storage sus, uint256 tokenId) { 
+    modifier mustNotCarrySusu(SusuwatariStorage storage sus) { 
 
     bool isCarrying = false;
     
 
     for (uint256 i = 0; i < sus.susuOwners.length; i++) {
-        if (sus.tokenIdToSusu[i].carrier == msg.sender) {
+        if (sus.tokenIdToSusu[i+1].carrier == msg.sender) {
             isCarrying = true;
             break;
         }
     }
-    require(!isCarrying, "Caller is already carry a Susuwatari Token!");
+    require(isCarrying == false, "Caller is already carrying a Susuwatari Token!");
         _;
     }
 
@@ -78,13 +78,18 @@ modifier isNotBeingCarriedSusu(SusuwatariStorage storage sus, uint256 tokenId) {
 }
 
 
+modifier cannotBeOwner(SusuwatariStorage storage sus, uint256 tokenId) {
+    require(sus.susuOwners[tokenId-1] != msg.sender, "The owner cannot move his own aimed Susuwatari!");
+    _;
+}
+
 
         modifier mustHaveBagSpace(SusuwatariStorage storage sus) {
 
     bool isCarrying = false;
     
     for (uint256 i = 0; i < sus.susuOwners.length; i++) {
-        if (sus.tokenIdToSusu[i].carrier == msg.sender) {
+        if (sus.tokenIdToSusu[i+1].carrier == msg.sender) {
             isCarrying = true;
             break;
         }
@@ -128,15 +133,18 @@ function getCurrentState(SusuwatariStorage storage sus) internal view returns (U
     }
 
     BaggageSlot memory slot;
-    for (uint256 i = 0; i < ownedTokens.length; i++) {
-        uint256 tokenId = ownedTokens[i];
-        if (sus.tokenIdToSusu[tokenId].carrier == msg.sender) {
+    for (uint256 i = 0; i < sus.susuOwners.length; i++) {
+        uint256 tokenId = i+1;
+       
+         if(sus.baggedSusus[tokenId] == msg.sender) {
             slot.susuTokenId = tokenId;
             slot.dropCooldownTime = sus.tokenIdToSusu[tokenId].dropCooldownTime;
             slot.ownerAddress = sus.susuOwners[tokenId-1];
             break; //one slot per user!
         }
     }
+
+    
 
     UserState memory state = UserState({
         ownedTokens: ownedTokens,
@@ -168,6 +176,25 @@ function getCurrentState(SusuwatariStorage storage sus) internal view returns (U
     
     }
 
+    
+    function giveSusuwatari(SusuwatariStorage storage sus) isUserRegistered(sus) mustNotCarrySusu(sus)  internal { 
+
+        Susu memory newSusu = Susu({
+            tokenId: sus.susuOwners.length + 1,
+            dropCooldownTime: 0,
+            originLocation: "",
+            currentLocation: "",
+            destination: "",
+            message: "",
+            carrier: msg.sender
+        });
+
+        sus.susuOwners.push(msg.sender);
+        sus.tokenIdToSusu[newSusu.tokenId] = newSusu;
+        sus.baggedSusus[newSusu.tokenId] = msg.sender;
+    
+    }
+
 function aimInitialSusu(SusuwatariStorage storage sus, uint256 tokenId, string memory location, string memory destination, string memory message) internal isUserRegistered(sus) mustExistSusu(sus, tokenId) susuMustNotHaveBeenAimed(sus, tokenId) returns (uint256, string memory, string memory, string memory) {
     
     Susu storage susu = sus.tokenIdToSusu[tokenId];
@@ -177,10 +204,11 @@ function aimInitialSusu(SusuwatariStorage storage sus, uint256 tokenId, string m
     susu.currentLocation = location;
     susu.destination = destination;
     susu.message = message;
-    susu.carrier = msg.sender;
-    sus.baggedSusus[tokenId] = msg.sender;
-    
+    susu.carrier = address(0);
+    sus.baggedSusus[tokenId] = address(0);
+    sus.tokenIdToSusu[tokenId] = susu;
     return (tokenId, location, destination, message);
+    
 }
 
 
@@ -192,41 +220,38 @@ function aimInitialSusu(SusuwatariStorage storage sus, uint256 tokenId, string m
 function dropSusu(
     SusuwatariStorage storage sus,
     uint256 tokenId,
-    string memory location,
-    string memory destination,
-    string memory message
+    string memory location
 ) 
     internal 
     isUserRegistered(sus) 
     mustExistSusu(sus, tokenId) 
     mustCarrySusu(sus, tokenId) 
-    returns (uint256, string memory, string memory, string memory) 
+    returns (uint256, string memory) 
 {
     Susu storage susu = sus.tokenIdToSusu[tokenId];
     
-    susu.dropCooldownTime = 300 + (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId))) % 301);
+    susu.dropCooldownTime = 0;
     susu.currentLocation = location;
     susu.carrier = address(0);
-    sus.baggedSusus[tokenId] = msg.sender;
-    
-    return (tokenId, location, destination, message);
+    sus.baggedSusus[tokenId] = address(0);
+    sus.tokenIdToSusu[tokenId] = susu;
+    return (tokenId, location);
 }
 
 
  
 function tryPickupSusu(
     SusuwatariStorage storage sus,
-    uint256 tokenId,
-    string memory location,
-    string memory destination,
-    string memory message
+    uint256 tokenId, //auto-ermitteln
+    string memory location
 ) 
     internal 
     isUserRegistered(sus) 
     mustExistSusu(sus, tokenId) 
-    mustNotCarrySusu(sus, tokenId) 
+    mustNotCarrySusu(sus) 
     isNotBeingCarriedSusu(sus, tokenId) 
-    returns (uint256, string memory, string memory, string memory) 
+    cannotBeOwner(sus, tokenId)
+    returns (uint256, string memory) 
 {
     Susu storage susu = sus.tokenIdToSusu[tokenId];
     
@@ -238,8 +263,9 @@ function tryPickupSusu(
     susu.dropCooldownTime = 300 + (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId))) % 301);
     susu.carrier = msg.sender;
     sus.baggedSusus[tokenId] = msg.sender;
-    
-    return (tokenId, location, destination, message);
+    sus.tokenIdToSusu[tokenId] = susu;
+
+    return (tokenId, location);
 }
 
 
