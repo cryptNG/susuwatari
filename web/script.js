@@ -860,7 +860,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
     document.querySelector('.dropButton').addEventListener('click', async () => {
       try {
         const tokenId = LibwalletMobileService.currentState.slot.susuTokenId;
-    
+        console.log("test");
         // Get the user's current position and selected position
         const { center, userLatLng } = await selectedPosition();
      
