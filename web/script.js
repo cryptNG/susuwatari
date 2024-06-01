@@ -831,7 +831,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
      
         // Calculate spot IDs for both locations
         const location = getSpotIdForCoordinates({lat:userLatLng[0],lon:userLatLng[1]});
-        const destination = getSpotIdForCoordinates({lat:center[0],log:center[1]});
+        const destination = getSpotIdForCoordinates({lat:center.lat,lon:center.lng});
         const message = "message";
     
         console.log("Test" + userLatLng, center);
