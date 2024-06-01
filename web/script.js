@@ -5,7 +5,11 @@ document.addEventListener("DOMContentLoaded", async ()=> {
     document.querySelectorAll('.pane').forEach((pane)=> {
      pane.classList.remove('active');
     } );
+    document.querySelectorAll('nav span').forEach((menu)=> {
+      menu.classList.remove('active');
+     } );
      document.querySelector('#game-pane').classList.add('active');
+     document.querySelector('nav .game').classList.add('active');
  },false);
 
     const messagesDiv = document.getElementById('messages');

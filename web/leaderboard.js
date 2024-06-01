@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", async ()=> {
        document.querySelectorAll('.pane').forEach((pane)=> {
         pane.classList.remove('active');
        } );
+       document.querySelectorAll('nav span').forEach((menu)=> {
+        menu.classList.remove('active');
+       } );
+        document.querySelector('nav .leader-board').classList.add('active');
         document.querySelector('#leader-board-pane').classList.add('active');
     },false);
 });
@@ -27,10 +31,22 @@ const LeaderBoard = {
        
         while(this.refresh){
             const tokenId=Math.trunc((Math.random()*100)) % 10;
+            const pos1 ={
+                lat:Math.trunc((Math.random()*180 - 90) * 100000)/100000,
+                lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
+            }
+            const pos2 ={
+                lat:Math.trunc((Math.random()*180 - 90) * 100000)/100000,
+                lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
+            }
+            const pos3 ={
+                lat:Math.trunc((Math.random()*180 - 90) * 100000)/100000,
+                lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
+            }
             this.events.push({
-                origin:'',
-                current:'',
-                destination:'',
+                origin:getSpotIdForCoordinates(pos1),
+                current:getSpotIdForCoordinates(pos2),
+                destination:getSpotIdForCoordinates(pos3),
                 tokenId:tokenId,
                 team:tokenId % 2
 
