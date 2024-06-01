@@ -19,6 +19,17 @@ struct LeafWalletStorage {
     mapping(address => uint256) _deviceActivationCodes;
 }
 
+    struct UserState {
+        uint256[] ownedTokens;
+        BaggageSlot slot;
+    }
+
+
+    struct BaggageSlot {
+        uint256 susuTokenId;
+        uint256 dropCooldownTime;
+        address ownerAddress;
+    }
 
     struct Susu {
         uint256 tokenId;

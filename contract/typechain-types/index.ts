@@ -20,10 +20,10 @@ export type { LeafWalletRegistryBasic } from "./contracts/LeafWalletRegistryBase
 export { LeafWalletRegistryBasic__factory } from "./factories/contracts/LeafWalletRegistryBase.sol/LeafWalletRegistryBasic__factory";
 export type { LeafWalletRegistryCore } from "./contracts/LeafWalletRegistryCore";
 export { LeafWalletRegistryCore__factory } from "./factories/contracts/LeafWalletRegistryCore__factory";
+export type { SusuwatariFacet } from "./contracts/SusuwatariFacet";
+export { SusuwatariFacet__factory } from "./factories/contracts/SusuwatariFacet__factory";
 export type { SusuwatariLeafWalletFacet } from "./contracts/SusuwatariLeafWalletFacet";
 export { SusuwatariLeafWalletFacet__factory } from "./factories/contracts/SusuwatariLeafWalletFacet__factory";
-export type { SusuwatariLeafWalletTrialFacet } from "./contracts/SusuwatariLeafWalletTrialFacet";
-export { SusuwatariLeafWalletTrialFacet__factory } from "./factories/contracts/SusuwatariLeafWalletTrialFacet__factory";
 export type { IDiamondCut } from "./hardhat-deploy/solc_0.8/diamond/interfaces/IDiamondCut";
 export { IDiamondCut__factory } from "./factories/hardhat-deploy/solc_0.8/diamond/interfaces/IDiamondCut__factory";
 export type { IDiamondLoupe } from "./hardhat-deploy/solc_0.8/diamond/interfaces/IDiamondLoupe";

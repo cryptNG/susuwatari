@@ -3,14 +3,16 @@
 pragma solidity ^0.8.18;
 
 
-import {SusuwatariStorage, Susu} from "./SusuwatariStorage.sol";
+import {SusuwatariStorage, Susu,UserState,BaggageSlot} from "./SusuwatariStorage.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat-deploy/solc_0.8/diamond/libraries/LibDiamond.sol";
+
+import "hardhat/console.sol";
 
 library LibSusuwatari{
 
    
-
+   
     
     modifier mustExistSusu(SusuwatariStorage storage sus, uint256 tokenId) {
         require(tokenId > 0 && tokenId <= sus.susuOwners.length, "The Susuwatari does not exist");
@@ -46,7 +48,7 @@ library LibSusuwatari{
 
 
 modifier isUserRegistered(SusuwatariStorage storage sus){
-      require(sus.maxSlotCount[msg.sender] > 0, "User is not registered"); 
+    //   require(sus.maxSlotCount[msg.sender] > 0, "User is not registered"); 
           _;
 }
 
@@ -96,7 +98,7 @@ modifier isNotBeingCarriedSusu(SusuwatariStorage storage sus, uint256 tokenId) {
   modifier susuMustNotHaveBeenAimed(SusuwatariStorage storage sus, uint256 tokenId) {
 
         
-    require(sus.susuOwners[tokenId] == msg.sender && sus.tokenIdToSusu[tokenId].carrier == msg.sender, "Caller is not owner");
+    require(sus.susuOwners[tokenId-1] == msg.sender && sus.tokenIdToSusu[tokenId].carrier == msg.sender, "Caller is not owner");
     
         _;
     }
@@ -104,20 +106,10 @@ modifier isNotBeingCarriedSusu(SusuwatariStorage storage sus, uint256 tokenId) {
     
 
 
-    struct UserState {
-        uint256[] ownedTokens;
-        Slot slot;
-    }
+    
 
 
-    struct Slot {
-        uint256 susuTokenId;
-        uint256 dropCooldownTime;
-        address ownerAddress;
-    }
-
-
-function getCurrentState(SusuwatariStorage storage sus) public view returns (UserState memory) {
+function getCurrentState(SusuwatariStorage storage sus) internal view returns (UserState memory) {
 
     uint256 ownedTokenCount = 0;
     for (uint256 i = 0; i < sus.susuOwners.length; i++) {
@@ -130,18 +122,18 @@ function getCurrentState(SusuwatariStorage storage sus) public view returns (Use
     uint256 index = 0;
     for (uint256 i = 0; i < sus.susuOwners.length; i++) {
         if (msg.sender == sus.susuOwners[i]) {
-            ownedTokens[index] = i;
+            ownedTokens[index] = i+1;
             index++;
         }
     }
 
-    Slot memory slot;
+    BaggageSlot memory slot;
     for (uint256 i = 0; i < ownedTokens.length; i++) {
         uint256 tokenId = ownedTokens[i];
         if (sus.tokenIdToSusu[tokenId].carrier == msg.sender) {
             slot.susuTokenId = tokenId;
             slot.dropCooldownTime = sus.tokenIdToSusu[tokenId].dropCooldownTime;
-            slot.ownerAddress = sus.susuOwners[tokenId];
+            slot.ownerAddress = sus.susuOwners[tokenId-1];
             break; //one slot per user!
         }
     }
@@ -176,12 +168,10 @@ function getCurrentState(SusuwatariStorage storage sus) public view returns (Use
     
     }
 
-function aimInitialSusu(SusuwatariStorage storage sus, uint256 tokenId, string memory location, string memory destination, string memory message) internal isUserRegistered(sus) mustExistSusu(sus, tokenId) susuMustNotHaveBeenAimed(sus,tokenId) returns (uint256, string memory, string memory, string memory) {
+function aimInitialSusu(SusuwatariStorage storage sus, uint256 tokenId, string memory location, string memory destination, string memory message) internal isUserRegistered(sus) mustExistSusu(sus, tokenId) susuMustNotHaveBeenAimed(sus, tokenId) returns (uint256, string memory, string memory, string memory) {
     
-       
     Susu storage susu = sus.tokenIdToSusu[tokenId];
     
-   
     susu.dropCooldownTime = 300 + (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId))) % 301);
     susu.originLocation = location;
     susu.currentLocation = location;
@@ -190,41 +180,68 @@ function aimInitialSusu(SusuwatariStorage storage sus, uint256 tokenId, string m
     susu.carrier = msg.sender;
     sus.baggedSusus[tokenId] = msg.sender;
     
+    return (tokenId, location, destination, message);
 }
 
 
 
 
 
-function dropSusu(SusuwatariStorage storage sus, uint256 tokenId, string memory location, string memory destination, string memory message) internal isUserRegistered(sus) mustExistSusu(sus, tokenId) mustCarrySusu(sus, tokenId) returns (uint256, string memory, string memory, string memory) {
-  
-    
+
+
+function dropSusu(
+    SusuwatariStorage storage sus,
+    uint256 tokenId,
+    string memory location,
+    string memory destination,
+    string memory message
+) 
+    internal 
+    isUserRegistered(sus) 
+    mustExistSusu(sus, tokenId) 
+    mustCarrySusu(sus, tokenId) 
+    returns (uint256, string memory, string memory, string memory) 
+{
     Susu storage susu = sus.tokenIdToSusu[tokenId];
     
-   
     susu.dropCooldownTime = 300 + (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId))) % 301);
     susu.currentLocation = location;
     susu.carrier = address(0);
     sus.baggedSusus[tokenId] = msg.sender;
     
+    return (tokenId, location, destination, message);
 }
 
- 
 
-function tryPickupSusu(SusuwatariStorage storage sus, uint256 tokenId, string memory location, string memory destination, string memory message) internal isUserRegistered(sus) mustExistSusu(sus, tokenId) mustNotCarrySusu(sus, tokenId) isNotBeingCarriedSusu(sus,tokenId) returns (uint256, string memory, string memory, string memory) {
-     
+ 
+function tryPickupSusu(
+    SusuwatariStorage storage sus,
+    uint256 tokenId,
+    string memory location,
+    string memory destination,
+    string memory message
+) 
+    internal 
+    isUserRegistered(sus) 
+    mustExistSusu(sus, tokenId) 
+    mustNotCarrySusu(sus, tokenId) 
+    isNotBeingCarriedSusu(sus, tokenId) 
+    returns (uint256, string memory, string memory, string memory) 
+{
     Susu storage susu = sus.tokenIdToSusu[tokenId];
     
-     require(
+    require(
         keccak256(abi.encodePacked(susu.currentLocation)) == keccak256(abi.encodePacked(location)), 
         "Caller is not in the correct location"
     );
    
     susu.dropCooldownTime = 300 + (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, tokenId))) % 301);
     susu.carrier = msg.sender;
-    susu.baggedSusus[tokenId] = msg.sender;
+    sus.baggedSusus[tokenId] = msg.sender;
     
+    return (tokenId, location, destination, message);
 }
+
 
 
 }

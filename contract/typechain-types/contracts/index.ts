@@ -9,5 +9,5 @@ export type { ILeafWalletRegistryCore } from "./ILeafWalletRegistryCore";
 export type { InitFacet } from "./InitFacet";
 export type { LeafWalletRegistryActivate } from "./LeafWalletRegistryActivate";
 export type { LeafWalletRegistryCore } from "./LeafWalletRegistryCore";
+export type { SusuwatariFacet } from "./SusuwatariFacet";
 export type { SusuwatariLeafWalletFacet } from "./SusuwatariLeafWalletFacet";
-export type { SusuwatariLeafWalletTrialFacet } from "./SusuwatariLeafWalletTrialFacet";

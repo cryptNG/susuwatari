@@ -41,13 +41,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LeafWalletRegistryCore__factory>;
     getContractFactory(
+      name: "SusuwatariFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SusuwatariFacet__factory>;
+    getContractFactory(
       name: "SusuwatariLeafWalletFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SusuwatariLeafWalletFacet__factory>;
-    getContractFactory(
-      name: "SusuwatariLeafWalletTrialFacet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SusuwatariLeafWalletTrialFacet__factory>;
     getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -97,15 +97,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LeafWalletRegistryCore>;
     getContractAt(
+      name: "SusuwatariFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SusuwatariFacet>;
+    getContractAt(
       name: "SusuwatariLeafWalletFacet",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SusuwatariLeafWalletFacet>;
-    getContractAt(
-      name: "SusuwatariLeafWalletTrialFacet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SusuwatariLeafWalletTrialFacet>;
     getContractAt(
       name: "IDiamondCut",
       address: string,

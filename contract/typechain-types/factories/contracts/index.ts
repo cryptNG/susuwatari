@@ -8,5 +8,5 @@ export { ILeafWalletRegistryCore__factory } from "./ILeafWalletRegistryCore__fac
 export { InitFacet__factory } from "./InitFacet__factory";
 export { LeafWalletRegistryActivate__factory } from "./LeafWalletRegistryActivate__factory";
 export { LeafWalletRegistryCore__factory } from "./LeafWalletRegistryCore__factory";
+export { SusuwatariFacet__factory } from "./SusuwatariFacet__factory";
 export { SusuwatariLeafWalletFacet__factory } from "./SusuwatariLeafWalletFacet__factory";
-export { SusuwatariLeafWalletTrialFacet__factory } from "./SusuwatariLeafWalletTrialFacet__factory";
