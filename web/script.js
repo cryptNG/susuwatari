@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async ()=> {
     const messagesDiv = document.getElementById('messages');
     const messagesGameDiv = document.getElementById('gameMessages');
+    const messagesNewUserDiv = document.getElementById('gameMessages');
 
   
     function displayMessage(message) {
@@ -123,6 +124,8 @@ document.addEventListener("DOMContentLoaded", async ()=> {
     displayMessage('Checking wallet registry...');
     if (!await LibwalletMobileService.checkWalletRegistered()) {
       displayMessage('Registering wallet...');
+      displayNewUserMessage("Welcome to Susuwatari! Please choose a Team!");
+
       await LibwalletMobileService.registerWallet();
     }
     displayMessage('Wallet registration complete!');
@@ -131,7 +134,6 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
     await LibwalletMobileService.getCurrentState();
     console.log('Current State:', LibwalletMobileService.currentState);
-    displayGameMessage("You've found a new Susuwatari! You can now choose it's destination.");
 
     if(LibwalletMobileService.isNewSusu) {
       const BigIntAdress = BigInt(LibwalletMobileService.adress);
@@ -139,5 +141,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
       let hexSeed = uniqueIconSeed.toString(16);
       const iconGenerator = new Icon(hexSeed, document.querySelector('.newSusu svg'));
       iconGenerator.generateIcon();
+      displayGameMessage("You've found a new Susuwatari! You can now choose it's destination.");
+
     }
 });
