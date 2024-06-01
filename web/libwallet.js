@@ -71,18 +71,25 @@ let LibwalletMobileService = {
     },
 
     get isCarryingSusu() {
-      if(this.currentState.slot.susuTokenId > 0){
-        return this.currentState.slot.susuTokenId
+      if(!this.isNewSusu && this.currentState.slot.susuTokenId > 0){
+        return true;
       }
+
+      return false;
     },
 
     get isPickingSusu(){
-      return this.currentState.slot.susuTokenId <= 0
+      return this.currentState.slot.susuTokenId <= 0;
     },
 
     get adress() {
       return this.connectedWallet.address;
     },
+
+    get susuTokenId(){
+      return this.currentState.slot.susuTokenId;
+    },
+    
     async checkWalletRegistered() {
       let hasChecked = false;      
       while (!hasChecked) {

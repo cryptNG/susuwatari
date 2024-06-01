@@ -14,6 +14,29 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
 
 }, false);
+
+document.querySelector('.dropButton').addEventListener('click', async () => {
+  try {
+    const tokenId = LibwalletMobileService.currentState.slot.susuTokenId;
+
+    // Get the user's current position and selected position
+    const { center, userLatLng } = await selectedPosition();
+ 
+    // Calculate spot IDs for both locations
+    const location = encodeCoordinates({lat:userLatLng[0],lon:userLatLng[1]});
+    const destination = encodeCoordinates({lat:center.lat,lon:center.lng});
+    const message = "message";
+
+    console.log("Test" + userLatLng, center);
+    console.log("aiming susu");
+    const tx = await LibwalletMobileService.aimInitialSusu(tokenId, location, destination, message);
+    console.log("POW susu shot");
+  } catch (err) {
+    console.log("Susu missed...");
+    console.log(err);
+  }
+},false);
+
     const messagesDiv = document.getElementById('messages');
     const messagesGameDiv = document.getElementById('gameMessages');
     const messagesChooseLocationDiv = document.getElementById('locationMessages');
@@ -71,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
     const contractAddress = '0xbc62d21a50930b689cd56b31A82d2c882105F04c';
     const jsonRpcUrl = 'https://testnet.cryptng.xyz:8545';
-    const contractAbi = [
+    const contractAbi =[
       {
         "inputs": [
           {
@@ -142,21 +165,21 @@ document.addEventListener("DOMContentLoaded", async ()=> {
         "inputs": [
           {
             "indexed": false,
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "originLocation",
-            "type": "uint64"
+            "type": "uint256"
           },
           {
             "indexed": false,
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "currentLocation",
-            "type": "uint64"
+            "type": "uint256"
           },
           {
             "indexed": false,
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "destination",
-            "type": "uint64"
+            "type": "uint256"
           },
           {
             "indexed": false,
@@ -166,9 +189,15 @@ document.addEventListener("DOMContentLoaded", async ()=> {
           },
           {
             "indexed": false,
-            "internalType": "uint256",
+            "internalType": "uint8",
             "name": "team",
-            "type": "uint256"
+            "type": "uint8"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "message",
+            "type": "string"
           }
         ],
         "name": "DroppedSusu",
@@ -216,9 +245,9 @@ document.addEventListener("DOMContentLoaded", async ()=> {
           },
           {
             "indexed": false,
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "location",
-            "type": "uint64"
+            "type": "uint256"
           },
           {
             "indexed": false,
@@ -256,14 +285,14 @@ document.addEventListener("DOMContentLoaded", async ()=> {
             "type": "uint256"
           },
           {
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "location",
-            "type": "uint64"
+            "type": "uint256"
           },
           {
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "destination",
-            "type": "uint64"
+            "type": "uint256"
           },
           {
             "internalType": "string",
@@ -272,28 +301,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
           }
         ],
         "name": "aimInitialSusu",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint64",
-            "name": "",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint64",
-            "name": "",
-            "type": "uint64"
-          },
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
+        "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
       },
@@ -305,9 +313,9 @@ document.addEventListener("DOMContentLoaded", async ()=> {
             "type": "uint256"
           },
           {
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "location",
-            "type": "uint64"
+            "type": "uint256"
           }
         ],
         "name": "dropSusu",
@@ -440,9 +448,9 @@ document.addEventListener("DOMContentLoaded", async ()=> {
             "type": "uint256"
           },
           {
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "location",
-            "type": "uint64"
+            "type": "uint256"
           }
         ],
         "name": "tryPickupSusu",
@@ -842,7 +850,17 @@ document.addEventListener("DOMContentLoaded", async ()=> {
       panToUserLocation();
 
       try {
-        const susuwataris = await LibwalletMobileService.getAllSusuwataris();
+        const susuwataris = LeaderBoard.tokens;
+
+        for (const key in susuwataris.keys()) {
+          const susu = susuwataris.get(key);
+          const posOrigin = decodeCoordinates(susu.origin);
+          const posCurrent = decodeCoordinates(susu.current);
+          const posDestination = decodeCoordinates(susu.destination);
+
+          
+        }
+
         console.log('All Susuwataris:', susuwataris);
     } catch (err) {
         console.error('Error fetching Susuwataris:', err);
@@ -857,26 +875,6 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
 
     
-    document.querySelector('.dropButton').addEventListener('click', async () => {
-      try {
-        const tokenId = LibwalletMobileService.currentState.slot.susuTokenId;
     
-        // Get the user's current position and selected position
-        const { center, userLatLng } = await selectedPosition();
-     
-        // Calculate spot IDs for both locations
-        const location = getSpotIdForCoordinates({lat:userLatLng[0],lon:userLatLng[1]});
-        const destination = getSpotIdForCoordinates({lat:center.lat,lon:center.lng});
-        const message = "message";
-    
-        console.log("Test" + userLatLng, center);
-        console.log("aiming susu");
-        const tx = await LibwalletMobileService.aimInitialSusu(tokenId, location, destination, message);
-        console.log("POW susu shot");
-      } catch (err) {
-        console.log("Susu missed...");
-        console.log(err);
-      }
-    });
 
 });
