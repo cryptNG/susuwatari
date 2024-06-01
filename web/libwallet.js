@@ -58,6 +58,16 @@ let LibwalletMobileService = {
       return this.currentState.slot.ownerAddress === this.connectedWallet.address;
     },
 
+    get isCarryingSusu() {
+      if(this.currentState.slot.susuTokenId > 0){
+        return this.currentState.slot.susuTokenId
+      }
+    },
+
+    get isPickingSusu(){
+      return this.currentState.slot.susuTokenId <= 0
+    },
+
     get adress() {
       return this.connectedWallet.address;
     },
@@ -236,6 +246,20 @@ async getCurrentState() {
       return this.deviceWalletBalance = await this.provider.getBalance(this.connectedWallet.address) / BigInt(10 ** 18);
     },
   
+    async getAllSusuwataris() {
+      try {
+          if (!this.contract) {
+              throw new Error("Contract is not set up. Please set up the contract first.");
+          }
+          // Call the contract method
+          const susuwataris = await this.contract.getAllSusuwataris();
+          return susuwataris;
+      } catch (err) {
+          console.error('Error fetching Susuwataris:', err);
+          throw err;
+      }
+  },
+
     async assignData(message) {
       let success = false;
   
@@ -255,6 +279,8 @@ async getCurrentState() {
       return success;
     }
   };
+
+  
 
   window.LibwalletMobileService = LibwalletMobileService;
   
