@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.18;
 
@@ -10,16 +10,15 @@ import "hardhat/console.sol";
 
 library LibSusuwatari {
 
+    struct SusuwatariInfo {
+        uint256 tokenId;
+        address owner;
+    }
 
- struct SusuwatariInfo {
-    uint256 tokenId;
-    address owner;
-}
-
-struct BaggedSusuInfo {
-    uint256 tokenId;
-    address carrier;
-}
+    struct BaggedSusuInfo {
+        uint256 tokenId;
+        address carrier;
+    }
 
     modifier mustExistSusu(SusuwatariStorage storage sus, uint256 tokenId) {
         require(
@@ -163,9 +162,9 @@ struct BaggedSusuInfo {
         Susu memory newSusu = Susu({
             tokenId: sus.susuOwners.length + 1,
             dropCooldownTime: 0,
-            originLocation: "",
-            currentLocation: "",
-            destination: "",
+            originLocation: 0,
+            currentLocation: 0,
+            destination: 0,
             message: "",
             carrier: msg.sender
         });
@@ -182,9 +181,9 @@ struct BaggedSusuInfo {
         Susu memory newSusu = Susu({
             tokenId: sus.susuOwners.length + 1,
             dropCooldownTime: 0,
-            originLocation: "",
-            currentLocation: "",
-            destination: "",
+            originLocation: 0,
+            currentLocation: 0,
+            destination: 0,
             message: "",
             carrier: msg.sender
         });
@@ -197,15 +196,15 @@ struct BaggedSusuInfo {
     function aimInitialSusu(
         SusuwatariStorage storage sus,
         uint256 tokenId,
-        string memory location,
-        string memory destination,
+        uint64 location,
+        uint64 destination,
         string memory message
     )
         internal
         isUserRegistered(sus)
         mustExistSusu(sus, tokenId)
         susuMustNotHaveBeenAimed(sus, tokenId)
-        returns (uint256, string memory, string memory, string memory)
+        returns (uint256, uint64, uint64, string memory)
     {
         Susu storage susu = sus.tokenIdToSusu[tokenId];
 
@@ -229,13 +228,13 @@ struct BaggedSusuInfo {
     function dropSusu(
         SusuwatariStorage storage sus,
         uint256 tokenId,
-        string memory location
+        uint64 location
     )
         internal
         isUserRegistered(sus)
         mustExistSusu(sus, tokenId)
         mustCarrySusu(sus, tokenId)
-        returns (uint256, string memory)
+        returns (uint256, uint64)
     {
         Susu storage susu = sus.tokenIdToSusu[tokenId];
 
@@ -250,7 +249,7 @@ struct BaggedSusuInfo {
     function tryPickupSusu(
         SusuwatariStorage storage sus,
         uint256 tokenId, //auto-ermitteln
-        string memory location
+        uint64 location
     )
         internal
         isUserRegistered(sus)
@@ -258,13 +257,12 @@ struct BaggedSusuInfo {
         mustNotCarrySusu(sus)
         isNotBeingCarriedSusu(sus, tokenId)
         cannotBeOwner(sus, tokenId)
-        returns (uint256, string memory)
+        returns (uint256, uint64)
     {
         Susu storage susu = sus.tokenIdToSusu[tokenId];
 
         require(
-            keccak256(abi.encodePacked(susu.currentLocation)) ==
-                keccak256(abi.encodePacked(location)),
+            susu.currentLocation == location,
             "Caller is not in the correct location"
         );
 
@@ -282,53 +280,49 @@ struct BaggedSusuInfo {
         return (tokenId, location);
     }
 
-   
-function getAllSusuwataris(
-    SusuwatariStorage storage sus
-) internal view returns (SusuwatariInfo[] memory) {
-    uint256 length = sus.susuOwners.length;
-    SusuwatariInfo[] memory susuwataris = new SusuwatariInfo[](length);
-    
-    for (uint256 i = 0; i < length; i++) {
-        susuwataris[i] = SusuwatariInfo({
-            tokenId: i + 1,
-            owner: sus.susuOwners[i]
-        });
-    }
-    
-    return susuwataris;
-}
-
-function getBaggedSusus(
-    SusuwatariStorage storage sus
-) internal view returns (BaggedSusuInfo[] memory) {
-    uint256 length = sus.susuOwners.length;
-    uint256 baggedCount = 0;
-
-    for (uint256 i = 0; i < length; i++) {
-        if (sus.baggedSusus[i + 1] != address(0)) {
-            baggedCount++;
-        }
-    }
-
-    BaggedSusuInfo[] memory baggedSusus = new BaggedSusuInfo[](baggedCount);
-    uint256 index = 0;
-
-    for (uint256 i = 0; i < length; i++) {
-        uint256 tokenId = i + 1;
-        if (sus.baggedSusus[tokenId] != address(0)) {
-            baggedSusus[index] = BaggedSusuInfo({
-                tokenId: tokenId,
-                carrier: sus.baggedSusus[tokenId]
+    function getAllSusuwataris(
+        SusuwatariStorage storage sus
+    ) internal view returns (SusuwatariInfo[] memory) {
+        uint256 length = sus.susuOwners.length;
+        SusuwatariInfo[] memory susuwataris = new SusuwatariInfo[](length);
+        
+        for (uint256 i = 0; i < length; i++) {
+            susuwataris[i] = SusuwatariInfo({
+                tokenId: i + 1,
+                owner: sus.susuOwners[i]
             });
-            index++;
         }
+        
+        return susuwataris;
     }
 
-    return baggedSusus;
-}
+    function getBaggedSusus(
+        SusuwatariStorage storage sus
+    ) internal view returns (BaggedSusuInfo[] memory) {
+        uint256 length = sus.susuOwners.length;
+        uint256 baggedCount = 0;
 
+        for (uint256 i = 0; i < length; i++) {
+            if (sus.baggedSusus[i + 1] != address(0)) {
+                baggedCount++;
+            }
+        }
 
-    
+        BaggedSusuInfo[] memory baggedSusus = new BaggedSusuInfo[](baggedCount);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < length; i++) {
+            uint256 tokenId = i + 1;
+            if (sus.baggedSusus[tokenId] != address(0)) {
+                baggedSusus[index] = BaggedSusuInfo({
+                    tokenId: tokenId,
+                    carrier: sus.baggedSusus[tokenId]
+                });
+                index++;
+            }
+        }
+
+        return baggedSusus;
+    }
 
 }

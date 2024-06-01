@@ -183,8 +183,8 @@
       ]
     },
     "/myapp/contracts/SusuwatariStorage.sol": {
-      "lastModificationDate": 1717191497551,
-      "contentHash": "97cd9043895b19c7019e905901921091",
+      "lastModificationDate": 1717250394067,
+      "contentHash": "e3132f94fb02511aa4c179e7fcd720f4",
       "sourceName": "contracts/SusuwatariStorage.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -452,8 +452,8 @@
       ]
     },
     "/myapp/contracts/SusuwatariFacet.sol": {
-      "lastModificationDate": 1717248888097,
-      "contentHash": "34c1cd03480fa1214a6ac8dfbfc2f1c0",
+      "lastModificationDate": 1717249793917,
+      "contentHash": "269fef422f6eb574c60dc40155378d0b",
       "sourceName": "contracts/SusuwatariFacet.sol",
       "solcConfig": {
         "version": "0.8.18",
@@ -501,8 +501,8 @@
       ]
     },
     "/myapp/contracts/LibSusuwatari.sol": {
-      "lastModificationDate": 1717248780237,
-      "contentHash": "409410129fabeb2dbf8a688f4c2499bb",
+      "lastModificationDate": 1717249721117,
+      "contentHash": "446b8e945eeaea15e3b3a4222243284b",
       "sourceName": "contracts/LibSusuwatari.sol",
       "solcConfig": {
         "version": "0.8.18",

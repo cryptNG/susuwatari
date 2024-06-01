@@ -30,9 +30,9 @@ const deploySusuwatari: DeployFunction = async function (hre: HardhatRuntimeEnvi
     {
       deterministic:false,
       name:"SusuwatariFacet"},
-    //{
-    //   deterministic:false,
-    //   name:"SusuwatariLeafWalletFacet"},
+    {
+      deterministic:false,
+      name:"SusuwatariLeafWalletFacet"},
       
         
     ],
