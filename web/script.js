@@ -8,19 +8,25 @@ document.addEventListener("DOMContentLoaded", async ()=> {
       messagesDiv.textContent = message;
     }
 
-    async function displayGameMessage(message) {
-      const currentMessage = messagesGameDiv.textContent;
-      for (let i = currentMessage.length; i >= 0; i--) {
-          messagesGameDiv.textContent = currentMessage.substring(0, i);
-          await new Promise(resolve => setTimeout(resolve, 30)); 
-      }
+    let deleteAndType = true;
 
-      // Type new message one letter at a time
-      for (let i = 0; i <= message.length; i++) {
-          messagesGameDiv.textContent = message.substring(0, i);
-          await new Promise(resolve => setTimeout(resolve, 30));
-      }
-  }
+    async function displayGameMessage(message) {
+        if (deleteAndType) {
+            const currentMessage = messagesGameDiv.textContent;
+            for (let i = currentMessage.length; i >= 0; i--) {
+                messagesGameDiv.textContent = currentMessage.substring(0, i);
+                await new Promise(resolve => setTimeout(resolve, 30)); 
+            }
+    
+            // Type new message one letter at a time
+            for (let i = 0; i <= message.length; i++) {
+                messagesGameDiv.textContent = message.substring(0, i);
+                await new Promise(resolve => setTimeout(resolve, 30));
+            }
+        } else {
+            messagesGameDiv.textContent = message;
+        }
+    }
 
 
 
@@ -176,5 +182,15 @@ document.addEventListener("DOMContentLoaded", async ()=> {
     panToUserLocation();
     await displayGameMessage("Please choose its destination!");
 
-
+    map.on('move', async () => {
+      try {
+        const points = await selectedPosition();
+          deleteAndType = false; // Switch to normal text displayer
+          await displayGameMessage(`Potential points: ${points}`);
+          deleteAndType = true; // Switch back to delete and type mode
+      } catch (error) {
+          console.error("Error:", error);
+          // Handle error
+      }
+  });
 });
