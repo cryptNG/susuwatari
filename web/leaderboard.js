@@ -28,20 +28,63 @@ const LeaderBoard = {
         this.updateLeaderBoardUi();
     },
     async autoRefreshDropEvents (){
-       
+
+  
         while(this.refresh){
-            const tokenId=Math.trunc((Math.random()*100)) % 10;
+
+            if(LibwalletMobileService.isLoaded){
+                try{
+                    const eventFilter = LibwalletMobileService.contract.filters.DroppedSusu();
+            
+                    let blockStep = 500;
+                    eventFilter.toBlock=await LibwalletMobileService.provider.getBlockNumber();
+                    eventFilter.fromBlock=eventFilter.toBlock - blockStep > 0 ? eventFilter.toBlock - blockStep:0;
+                    while(eventFilter.toBlock!==0 && blockStep>0)
+                    {
+                        try{
+                            const logs = await this.provider.getLogs(eventFilter);
+                            if(logs.length>0)
+                            {
+                                logs.forEach((log)=>{
+                                    const data = LibwalletMobileService.interface.decodeEventLog("DroppedSusu",logs[0].data);
+                                })
+                                console.debug(logs);
+                                const data = LibwalletMobileService.interface.decodeEventLog("DroppedSusu",log.data);
+                                console.log(data);
+                                this.events.push({
+                                    origin:data.origin,
+                                    current:data.current,
+                                    destination:data.destination,
+                                    tokenId:data.tokenId,
+                                    team:data.team
+                                });
+                            }
+                    
+                            eventFilter.toBlock=eventFilter.fromBlock;
+                            eventFilter.fromBlock = eventFilter.toBlock - blockStep > 0 ? eventFilter.toBlock - blockStep:0;
+                            
+                        }catch(exc){
+                            blockStep=blockStep>0?blockStep-100:blockStep;
+                            eventFilter.fromBlock = eventFilter.toBlock - blockStep > 0 ? eventFilter.toBlock - blockStep:0;
+                        }
+                    }
+                }catch(e){
+                    console.error(e);
+                }
+            }
+
+            const tokenId=Math.trunc((Math.random()*100)) % 30;
             const pos1 ={
                 lat:Math.trunc((Math.random()*180 - 90) * 100000)/100000,
                 lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
             }
             const pos2 ={
-                lat:Math.trunc((Math.random()*180 - 90) * 100000)/100000,
-                lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
+                lat:pos1.lat + Math.trunc((Math.random()*180 - 90) * 1000)/100000,
+                lon:pos1.lon + Math.trunc((Math.random()*360 - 180) * 1000)/100000,
             }
             const pos3 ={
-                lat:Math.trunc((Math.random()*180 - 90) * 100000)/100000,
-                lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
+                lat:pos1.lat + Math.trunc((Math.random()*180 - 90) * 1000)/100000,
+                lon:pos1.lon + Math.trunc((Math.random()*360 - 180) * 1000)/100000,
             }
             this.events.push({
                 origin:getSpotIdForCoordinates(pos1)+'',
@@ -69,18 +112,28 @@ const LeaderBoard = {
                 return a;
             },{0:[],1:[]});
 
-            let teamAPoints = 0;
+            let teamAPoints = BigInt(0);
             teamGroups[0].forEach((event)=>{
-                teamAPoints += event.tokenId;
+                const maxPoints = Math.trunc(Math.abs(event.destination - event.origin) / 10000);
+                const lostPoints = Math.trunc(Math.abs(event.destination - event.current) / 10000);
+                const realizedPoints = maxPoints - lostPoints;
+                const pointsToAdd = BigInt((realizedPoints>0)? realizedPoints:0);
+                teamAPoints = teamAPoints + pointsToAdd;
             });
 
-            let teamBPoints = 0;
+            let teamBPoints = BigInt(0);
             teamGroups[1].forEach((event)=> {
-                teamBPoints += event.tokenId;
+                const maxPoints = Math.trunc(Math.abs(event.destination - event.origin) / 10000);
+                const lostPoints = Math.trunc(Math.abs(event.destination - event.current) / 10000);
+                const realizedPoints = maxPoints - lostPoints;
+                const pointsToAdd = BigInt((realizedPoints>0)? realizedPoints:0);
+                teamBPoints = teamBPoints + pointsToAdd;
             });
 
             this.teamPoints.set(0,teamAPoints);
             this.teamPoints.set(1,teamBPoints);
+
+            
 
             await timeout(1000);
         }
@@ -88,8 +141,18 @@ const LeaderBoard = {
     async updateLeaderBoardUi (){
         while(this.refresh){
 
-            document.querySelector('.leader-board .team-a .points').textContent=this.teamPoints.get(0);
-            document.querySelector('.leader-board .team-b .points').textContent=this.teamPoints.get(1);
+            document.querySelectorAll('.leader-board .team').forEach((ele)=>ele.classList.remove('winner'));
+            const teamAPoints = this.teamPoints.get(0);
+            const teamBPoints = this.teamPoints.get(1);
+
+            document.querySelector('.leader-board .team-a .points').textContent=teamAPoints;
+            document.querySelector('.leader-board .team-b .points').textContent=teamBPoints;
+
+            if(teamAPoints>teamBPoints){
+                document.querySelector('.leader-board .team-a').classList.add('winner');
+            }else{
+                document.querySelector('.leader-board .team-b').classList.add('winner');
+            }
 
             await timeout(1000);
         }
