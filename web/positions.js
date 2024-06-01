@@ -30,17 +30,17 @@ function calculateDistance(pos1,pos2){
 
 function encodeCoordinates(pos){
     
-    const latBig = Math.round((pos.lat+90) * 100000) * 10000000000;
-    const lon = Math.round((pos.lon+180) * 100000);
+    const latBig = BigInt(Math.round((pos.lat+90) * 100000)) * 10000000000n;
+    const lon = BigInt(Math.round((pos.lon+180) * 100000));
 
-    return BigInt(latBig + lon);
+    return (latBig + lon);
 }
 
 function decodeCoordinates(encCoord){
     
-    const latLon =Math.trunc( encCoord / 10000000000) ;
+    const latLon =Math.trunc( Number(encCoord / 10000000000n)) ;
 
-    const lonLon =encCoord - (latLon * 10000000000);
+    const lonLon =Number(encCoord - (BigInt(latLon) * 10000000000n));
 
     return {lat:(latLon/100000)-90, lon:(lonLon/100000)-180};
 }

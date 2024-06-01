@@ -59,6 +59,7 @@ let LibwalletMobileService = {
       const tx = await this.contract.giveSusuwatari();
       await tx.wait();
       console.log('Transaction completed:', tx);
+      window.changeState++;
       return tx;
     } catch (err) {
       console.error('Error aiming initial susu:', err);
@@ -82,14 +83,14 @@ let LibwalletMobileService = {
       return this.currentState.slot.susuTokenId <= 0;
     },
 
-    get adress() {
+    get address() {
       return this.connectedWallet.address;
     },
 
     get susuTokenId(){
       return this.currentState.slot.susuTokenId;
     },
-    
+
     async checkWalletRegistered() {
       let hasChecked = false;      
       while (!hasChecked) {
@@ -112,6 +113,16 @@ let LibwalletMobileService = {
     let pubKey = this.connectedWallet.signingKey.publicKey;
         let address = window.ethers.computeAddress(pubKey);
         let tx = await this.contract.registerAndAssignMe(Math.trunc(Math.random()*100)%2);
+        await tx.wait();
+        console.log('tx:'+ await tx.wait());
+        txResponse = tx;
+        this.isRegistered = true;
+        this.isNewUser = true;
+    return txResponse;
+},
+  async tryPickupSusu(tokenId) {
+    let txResponse = null;
+        let tx = await this.contract.tryPickupSusu(tokenId);
         await tx.wait();
         console.log('tx:'+ await tx.wait());
         txResponse = tx;

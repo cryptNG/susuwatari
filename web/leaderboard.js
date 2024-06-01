@@ -27,6 +27,21 @@ const LeaderBoard = {
         this.calculateLeaderBoard();
         this.updateLeaderBoardUi();
     },
+
+    get susus(){
+ 
+        const sususWithOwner = [...this.tokens.values()].map((susu)=>{
+            susu.ownerAddress =window.allSusuwataris.find((_susu)=>susu.tokenId===_susu.tokenId).owner;
+            susu.posOrigin = decodeCoordinates(susu.origin);
+            susu.posCurrent = decodeCoordinates(susu.current);
+            susu.posDestination = decodeCoordinates(susu.destination);
+            susu.currentSpotId=getSpotIdForCoordinates(susu.posCurrent);
+            return susu;
+  
+          })
+
+        return sususWithOwner;
+    },
     async autoRefreshDropEvents (){
 
         let lastFromBlock=0;
