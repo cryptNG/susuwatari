@@ -59,6 +59,7 @@ let LibwalletMobileService = {
       const tx = await this.contract.giveSusuwatari();
       await tx.wait();
       console.log('Transaction completed:', tx);
+      window.changeState++;
       return tx;
     } catch (err) {
       console.error('Error aiming initial susu:', err);

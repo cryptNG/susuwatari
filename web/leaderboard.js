@@ -27,6 +27,21 @@ const LeaderBoard = {
         this.calculateLeaderBoard();
         this.updateLeaderBoardUi();
     },
+
+    get susus(){
+        const susuwataris = this.tokens;
+        let susus=susuwataris.values().map((susu)=>{
+         
+          susu.posOrigin = decodeCoordinates(susu.origin);
+          susu.posCurrent = decodeCoordinates(susu.current);
+          susu.posDestination = decodeCoordinates(susu.destination);
+
+          
+        
+        });
+
+        return susus;
+    }
     async autoRefreshDropEvents (){
 
         let lastFromBlock=0;

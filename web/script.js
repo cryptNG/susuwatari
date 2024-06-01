@@ -34,12 +34,13 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
   } catch (err) {
     console.log("Susu missed...");
     console.log(err);
+
   }
+  window.changeState++;
 },false);
 
     const messagesDiv = document.getElementById('messages');
     const messagesGameDiv = document.getElementById('gameMessages');
-    const messagesChooseLocationDiv = document.getElementById('locationMessages');
 
   
     function displayMessage(message) {
@@ -66,11 +67,6 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
         }
     }
 
-
-
-    function displayChooseLocation(message) {
-      messagesChooseLocationDiv.textContent = message;
-    }
 
     async function setLoaderComplete() {
       loader.style.borderColor = '#4CAF50';
@@ -799,11 +795,26 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
 
     setLoaderComplete();
     //displayChooseLocation("Please choose where to drop your Susuwari");
+    window.refresh=true;
+    window.changeState=0;
+    async function loadGame(){
+      let lastChangeState = -1;
+      while(window.refresh===true){
+      while(lastChangeState === window.changeState){
+        await timeout(100);
+      }
+      document.querySelector('#game-pane').classList.remove('drop-susu');
+      document.querySelector('#game-pane').classList.remove('pick-susu');
+      document.querySelector('#game-pane').classList.remove('carry-susu');
 
+      if(map) map.off('moveend', updateCachePositions);
+
+    lastChangeState = window.changeState;
     await LibwalletMobileService.getCurrentState();
     console.log('Current State:', LibwalletMobileService.currentState);
 
     if(LibwalletMobileService.isNewSusu) {
+      document.querySelector('#game-pane').classList.add('drop-susu');
       const BigIntAdress = BigInt(LibwalletMobileService.adress);
       const uniqueIconSeed = BigIntAdress ^ BigInt(LibwalletMobileService.currentState.slot.susuTokenId);
       let hexSeed = uniqueIconSeed.toString(16);
@@ -813,8 +824,7 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
       await timeout(1500);
       await moveGameMessage();
       await timeout(2500);
-      initMap();
-      panToUserLocation();
+     
       await displayGameMessage("Please choose its destination!");
       document.querySelector('.dropButton').style.display = 'block';
       updatePositionPeriodically();
@@ -830,9 +840,11 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
           // Handle error
         }
       });
+
     }
 
     if(LibwalletMobileService.isCarryingSusu){
+      document.querySelector('#game-pane').classList.add('carry-susu');
       console.log("statenew")
       await timeout(1500);
       await moveGameMessage();
@@ -841,40 +853,61 @@ document.querySelector('.dropButton').addEventListener('click', async () => {
     }
 
     if(LibwalletMobileService.isPickingSusu){
+      document.querySelector('#game-pane').classList.add('pick-susu');
       console.log("startpick")
       await displayGameMessage("It seems like your Slot is empty...");
       await timeout(1500);
       await moveGameMessage();
       await displayGameMessage("Let's find you a new Susuwatari!");
-      initMap();
-      panToUserLocation();
+     
 
       try {
-        const susuwataris = LeaderBoard.tokens;
+        
 
-        for (const key in susuwataris.keys()) {
-          const susu = susuwataris.get(key);
-          const posOrigin = decodeCoordinates(susu.origin);
-          const posCurrent = decodeCoordinates(susu.current);
-          const posDestination = decodeCoordinates(susu.destination);
-
-          
-        }
+        updatePositionEvent(LeaderBoard.susus);
 
         console.log('All Susuwataris:', susuwataris);
     } catch (err) {
         console.error('Error fetching Susuwataris:', err);
     }
 
+    showCaches=()=> {
+      let caches = document.querySelectorAll('.inmap-cache');
+      caches.forEach(cache => {
+        cache.classList.remove('hidden');
+        cache.classList.remove('animate-fade-in'); // Remove the animation class
+        
+        // Force a reflow. This is synchronous and will cause a layout
+        void cache.offsetWidth;
+  
+        cache.classList.add('animate-fade-in'); // Re-add the animation class
+      });
+    }
+
+    map.on('moveend', () => {
+        window.requestAnimationFrame(updateCachePositions.bind(this));
+      });
+
+      
+      map.on('zoomstart', hideCaches.bind(this));
+
+      map.on('zoomend', () => {
+        window.requestAnimationFrame(() => {
+            updateCachePositions(showCaches.bind(this));
+        });
+    });
     }
 
 
 
+    document.querySelector('#game-pane').classList.add('show-map');
 
 
-
-
+  }
+}
     
        
-
+loadGame();
+initMap();
+panToUserLocation();
 });
