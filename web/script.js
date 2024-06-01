@@ -179,6 +179,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
     await moveGameMessage();
     await timeout(2500);
     initMap();
+    document.querySelector('.dropButton').style.display = 'block';
     panToUserLocation();
     await displayGameMessage("Please choose its destination!");
 
