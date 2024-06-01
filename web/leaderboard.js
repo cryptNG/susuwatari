@@ -44,9 +44,9 @@ const LeaderBoard = {
                 lon:Math.trunc((Math.random()*360 - 180) * 100000)/100000,
             }
             this.events.push({
-                origin:getSpotIdForCoordinates(pos1),
-                current:getSpotIdForCoordinates(pos2),
-                destination:getSpotIdForCoordinates(pos3),
+                origin:getSpotIdForCoordinates(pos1)+'',
+                current:getSpotIdForCoordinates(pos2)+'',
+                destination:getSpotIdForCoordinates(pos3)+'',
                 tokenId:tokenId,
                 team:tokenId % 2
 

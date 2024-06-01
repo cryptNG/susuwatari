@@ -67,7 +67,7 @@ function getSpotIdForCoordinates(pos,log = false)
   
     if(log) console.log("latSpot "+latSpot);
   
-    const spotId = BigInt(longSpot.toString()).mul(16777216).add(latSpot); //longSpot is shifted left and latSpot is added
+    const spotId = BigInt(longSpot.toString()) * BigInt(16777216) + BigInt(latSpot); //longSpot is shifted left and latSpot is added
     return spotId;
   }
 
