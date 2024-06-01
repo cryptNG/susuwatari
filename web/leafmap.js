@@ -35,6 +35,23 @@ const panToUserLocation = () => {
     }
 };
 
+let userPosition = null;
+
+const updatePositionPeriodically = async () => {
+  while (true) {
+      await new Promise((resolve) => {
+          setTimeout(() => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition((position) => {
+                  userPosition = [position.coords.latitude, position.coords.longitude];
+              });
+          }
+          resolve();
+          }, 5000); // Update every 5 seconds
+      });
+  }
+};
+
 const getDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Radius of the earth in km
   const dLat = deg2rad(lat2 - lat1);

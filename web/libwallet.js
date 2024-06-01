@@ -79,7 +79,7 @@ let LibwalletMobileService = {
     let txResponse = null;
     let pubKey = this.connectedWallet.signingKey.publicKey;
         let address = window.ethers.computeAddress(pubKey);
-        let tx = await this.contract.assignActivatableAddressToSender(address);
+        let tx = await this.contract.registerAndAssignMe(Math.trunc(Math.random()*100)%2);
         await tx.wait();
         console.log('tx:'+ await tx.wait());
         txResponse = tx;
@@ -96,17 +96,7 @@ async getCurrentState() {
           try {
             // Call the contract function
 
-            //this.currentState = await this.contract.getCurrentState({ from: this.connectedWallet.address });
-            this.currentState = {
-              ownedTokes:[
-                1
-              ],
-              slot:{
-                 susuTokenId:120,
-                 dropCooldownTime: new Date(Date.now() + 5 * 60000).getTime(),
-                 ownerAddress:this.connectedWallet.address,
-              }
-           };
+            this.currentState = await this.contract.getCurrentState({ from: this.connectedWallet.address });
             hasChecked = true;
           } catch (e) {
             console.log('getCurrentState error:' + e)
