@@ -113,18 +113,24 @@ const LeaderBoard = {
 
             let teamAPoints = BigInt(0);
             teamGroups[0].forEach((event)=>{
-                const maxPoints = Math.trunc(Math.abs(Number(event.destination - event.origin)) / 10000);
-                const lostPoints = Math.trunc(Math.abs(Number(event.destination - event.current)) / 10000);
-                const realizedPoints = maxPoints - lostPoints;
+                const destPos = decodeCoordinates(event.destination);
+                const curPos = decodeCoordinates(event.current);
+                const origPos = decodeCoordinates(event.origin);
+                const maxDistance = getDistance(destPos.lat*1, destPos.lon*1, origPos.lat*1,origPos.lon*1);
+                const curDistance = getDistance(destPos.lat*1, destPos.lon*1, curPos.lat*1,curPos.lon*1);
+                const realizedPoints = calculatePoints(maxDistance) - calculatePoints(curDistance);
                 const pointsToAdd = BigInt((realizedPoints>0)? realizedPoints:0);
                 teamAPoints = teamAPoints + pointsToAdd;
             });
 
             let teamBPoints = BigInt(0);
             teamGroups[1].forEach((event)=> {
-                const maxPoints = Math.trunc(Math.abs(Number(event.destination - event.origin)) / 10000);
-                const lostPoints = Math.trunc(Math.abs(Number(event.destination - event.current)) / 10000);
-                const realizedPoints = maxPoints - lostPoints;
+                const destPos = decodeCoordinates(event.destination);
+                const curPos = decodeCoordinates(event.current);
+                const origPos = decodeCoordinates(event.origin);
+                const maxDistance = getDistance(destPos.lat*1, destPos.lon*1, origPos.lat*1,origPos.lon*1);
+                const curDistance = getDistance(destPos.lat*1, destPos.lon*1, curPos.lat*1,curPos.lon*1);
+                const realizedPoints = calculatePoints(maxDistance) - calculatePoints(curDistance);
                 const pointsToAdd = BigInt((realizedPoints>0)? realizedPoints:0);
                 teamBPoints = teamBPoints + pointsToAdd;
             });

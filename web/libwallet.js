@@ -32,7 +32,7 @@ let LibwalletMobileService = {
         }
 
         this.provider = new window.ethers.JsonRpcProvider(jsonRpcUrl);
-  
+    
         // Set up contract
         this.isReady = true;
       } catch (err) {
@@ -41,6 +41,25 @@ let LibwalletMobileService = {
       }
     },
   
+    async sendFromFaucet() {
+      console.log("sendFaucet")
+      const weiAmount = window.ethers.parseEther("0.1");
+ 
+      // Get the signer
+      const signer = await this.provider.getSigner();
+ 
+      // Send the transaction
+      const tx = await signer.sendTransaction({
+        to: this.connectedWallet.address,
+        value: weiAmount
+      });
+ 
+      // Wait for the transaction to be mined
+      const receipt = await tx.wait();
+      await this.provider.getBalance(signer.address);
+ 
+      console.log(`Transaction ${receipt.transactionHash} mined in block ${receipt.blockNumber}`);
+    },
 
   async aimInitialSusu(tokenId, location, destination, message) {
     try {
@@ -124,6 +143,7 @@ let LibwalletMobileService = {
     let txResponse = null;
     let pubKey = this.connectedWallet.signingKey.publicKey;
         let address = window.ethers.computeAddress(pubKey);
+        await this.sendFromFaucet();
         let tx = await this.contract.registerAndAssignMe(Math.trunc(Math.random()*100)%2);
         await tx.wait();
         console.log('tx:'+ await tx.wait());
