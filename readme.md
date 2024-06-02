@@ -1,20 +1,19 @@
 # Susuwatari Game
 
 ## Deployed Contracts
-| Contract                         | Address                                     |
-|----------------------------------|---------------------------------------------|
-| initfacet                        | 0x239541e5C533Cd0e776a62f75334D173f2c76624  |
-| SusuwatariFacet                  | 0x10b973e00103408F3d653bCb2790Cd687f14d988  |
-| SusuwatariLeafWalletFacet        | 0xEd233BbB6E65272c229B1A8690426337582B4d81  |
-| _DefaultDiamondCutFacet          | 0x429dbdE7913c0Ed51E4B21163760B92eE66Ff5f5  |
-| _DefaultDiamondOwnershipFacet    | 0xaD6E96fF641af53CCe4205DAfeCb8e3aCD0490E3  |
-| _DefaultDiamondLoupeFacet        | 0x3Bcf4185443A339517aD4e580067f178d1B68E1D  |
-| initfacet                        | 0xe291a7ebF6C89C8Fd8a712a141f7b9FA3bD8D85b  |
-| _DefaultDiamondERC165Init        | 0xe68d85348f227d2ebEE814C38918F8A2D7d9B603  |
-| Susuwatari_DiamondProxy          | 0x8CAB3867BEAF347EA93Df293f61EDA47Af9Db652  |
+| Contract                         | Address                                     | Notes      |
+|----------------------------------|---------------------------------------------|------------|
+| initfacet                        | 0x239541e5C533Cd0e776a62f75334D173f2c76624  |            |
+| SusuwatariFacet                  | 0x10b973e00103408F3d653bCb2790Cd687f14d988  | verified   |
+| SusuwatariLeafWalletFacet        | 0xEd233BbB6E65272c229B1A8690426337582B4d81  |            |
+| _DefaultDiamondCutFacet          | 0x429dbdE7913c0Ed51E4B21163760B92eE66Ff5f5  |            |
+| _DefaultDiamondOwnershipFacet    | 0xaD6E96fF641af53CCe4205DAfeCb8e3aCD0490E3  |            |
+| _DefaultDiamondLoupeFacet        | 0x3Bcf4185443A339517aD4e580067f178d1B68E1D  |            |
+| initfacet                        | 0xe291a7ebF6C89C8Fd8a712a141f7b9FA3bD8D85b  |            |
+| _DefaultDiamondERC165Init        | 0xe68d85348f227d2ebEE814C38918F8A2D7d9B603  |            |
+| Susuwatari_DiamondProxy          | 0x8CAB3867BEAF347EA93Df293f61EDA47Af9Db652  |            |
 
 
-We had issues during verification and may update the verification status of the contracts, especially SusuwatariFacet.
 
 ## Overview
 

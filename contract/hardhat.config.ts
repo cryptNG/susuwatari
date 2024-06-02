@@ -72,31 +72,31 @@ const config: HardhatUserConfig = {
         apiKey: {
             polygon: 'XANEY2GZ5XJ7UWT3IQU7NEN1D8TRUW2QRH',
             mantle: 'XANEY2GZ5XJ7UWT3IQU7NEN1D8TRUW2QRH',
-            linea: 'XANEY2GZ5XJ7UWT3IQU7NEN1D8TRUW2QRH',
+            linea: '7QWUGKNC9Z5JVNEXGFHRE4B29QVE8XE9HN',
         },
         customChains: [
             {
                 network: 'polygon',
-                chainId: 534351,
+                chainId: 2442,
                 urls: {
-                    apiURL: 'https://sepolia-blockscout.scroll.io/api',
-                    browserURL: 'https://sepolia-blockscout.scroll.io/',
+                    apiURL: 'https://zkevm.polygonscan.com/api',
+                    browserURL: 'https://zkevm.polygonscan.com/',
                 },
             },
             {
                 network: "mantle",
-                chainId: 5001,
+                chainId: 5003,
                 urls: {
-                apiURL: "https://explorer.testnet.mantle.xyz/api",
-                browserURL: "https://explorer.testnet.mantle.xyz"
+                apiURL: "https://explorer.sepolia.mantle.xyz/api",
+                browserURL: "https://explorer.sepolia.mantle.xyz/"
                 }
             },
             {
                 network: "linea",
-                chainId: 10200,
+                chainId: 59141,
                 urls: {
-                  apiURL: "https://blockscout.com/gnosis/chiado/api",
-                  browserURL: "https://blockscout.com/gnosis/chiado",
+                  apiURL: "https://api-sepolia.lineascan.build/api",
+                  browserURL: "https://sepolia.lineascan.build/",
                 },
             },
         ],
