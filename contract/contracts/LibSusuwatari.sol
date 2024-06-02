@@ -13,6 +13,8 @@ library LibSusuwatari {
     struct SusuwatariInfo {
         uint256 tokenId;
         address owner;
+        bool isCarrying;
+
     }
 
     struct BaggedSusuInfo {
@@ -311,9 +313,12 @@ function tryPickupSusu(
         SusuwatariInfo[] memory susuwataris = new SusuwatariInfo[](length);
         
         for (uint256 i = 0; i < length; i++) {
+            uint256 currTokenId = i+1;
+            bool isBeingCarried = sus.baggedSusus[currTokenId] != address(0);
             susuwataris[i] = SusuwatariInfo({
-                tokenId: i + 1,
-                owner: sus.susuOwners[i]
+                tokenId: currTokenId,
+                owner: sus.susuOwners[i],
+                isCarrying: isBeingCarried
             });
         }
         

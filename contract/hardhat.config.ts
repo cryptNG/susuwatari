@@ -47,16 +47,58 @@ const config: HardhatUserConfig = {
             count: 20,
             passphrase: "",
             },
-        }
+        },        
+        polygon: {
+            url: "https://polygon-zkevm-cardona.blockpi.network/v1/rpc/public",
+            gasPrice: 5000000000,
+            accounts: ["d247bb493620640854d80abaf912803362a8f2d750003a44ab790e8810dfa0a5"]
+            
+          },
+                      
+        mantle: {
+            url: "https://rpc.sepolia.mantle.xyz",
+            gasPrice: 5000000000,
+            accounts: ["d247bb493620640854d80abaf912803362a8f2d750003a44ab790e8810dfa0a5"]
+          },
+          
+        linea: {
+            url: "https://linea-sepolia.blockpi.network/v1/rpc/public",
+            gasPrice: 5000000000,
+            accounts: ["d247bb493620640854d80abaf912803362a8f2d750003a44ab790e8810dfa0a5"]
+          },
+
     },
     etherscan: {
         apiKey: {
-            scroll: 'VGT2V589VNFQ4CFKJKYR7VW8XPC3WIACCW',
-            neonlabs: "test",
-            chiado:"your key"
+            polygon: 'XANEY2GZ5XJ7UWT3IQU7NEN1D8TRUW2QRH',
+            mantle: 'XANEY2GZ5XJ7UWT3IQU7NEN1D8TRUW2QRH',
+            linea: 'XANEY2GZ5XJ7UWT3IQU7NEN1D8TRUW2QRH',
         },
         customChains: [
-          
+            {
+                network: 'polygon',
+                chainId: 534351,
+                urls: {
+                    apiURL: 'https://sepolia-blockscout.scroll.io/api',
+                    browserURL: 'https://sepolia-blockscout.scroll.io/',
+                },
+            },
+            {
+                network: "mantle",
+                chainId: 5001,
+                urls: {
+                apiURL: "https://explorer.testnet.mantle.xyz/api",
+                browserURL: "https://explorer.testnet.mantle.xyz"
+                }
+            },
+            {
+                network: "linea",
+                chainId: 10200,
+                urls: {
+                  apiURL: "https://blockscout.com/gnosis/chiado/api",
+                  browserURL: "https://blockscout.com/gnosis/chiado",
+                },
+            },
         ],
     },
 };

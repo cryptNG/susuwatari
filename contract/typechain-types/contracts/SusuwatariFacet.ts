@@ -55,11 +55,13 @@ export declare namespace LibSusuwatari {
   export type SusuwatariInfoStruct = {
     tokenId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
+    isCarrying: PromiseOrValue<boolean>;
   };
 
-  export type SusuwatariInfoStructOutput = [BigNumber, string] & {
+  export type SusuwatariInfoStructOutput = [BigNumber, string, boolean] & {
     tokenId: BigNumber;
     owner: string;
+    isCarrying: boolean;
   };
 
   export type BaggedSusuInfoStruct = {
