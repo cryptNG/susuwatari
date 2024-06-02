@@ -7,7 +7,7 @@ let LibwalletMobileService = {
     isRegistered: false,
     isNewUser: false,
     isLoaded:false,
-    curretnState: {},
+    currentState: {},
     oldMessage: '',
     lastMessage: '',
     balance: 0,
@@ -98,6 +98,9 @@ let LibwalletMobileService = {
     }
   },
   
+    get team(){
+      return this.currentState.team || '';
+    },
     get isNewSusu() {
       return this.currentState.slot.ownerAddress === this.connectedWallet.address;
     },
