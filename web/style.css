@@ -305,3 +305,12 @@ animation-delay: 4.5s;
     animation-timing-function: linear;
 
 }
+
+.team-info {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 1em;
+    font-weight: 700;
+    text-shadow: 4px 3px 3px #00000045;
+}

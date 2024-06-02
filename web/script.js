@@ -130,6 +130,8 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
     }
     displayMessage('Wallet registration complete!');
 
+    document.querySelector('.team-info').textContent=LibwalletMobileService.team==0?'TEAM A':'TEAM B';
+
     setLoaderComplete();
     //displayChooseLocation("Please choose where to drop your Susuwari");
     window.refresh=true;
@@ -190,7 +192,7 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
       await displayGameMessage("Bring it nearer to it's destination to earn Fame Coins.");
       
       panToUserLocation();
-      
+
       updateDropPosition();
     }
 
