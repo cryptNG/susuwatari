@@ -200,7 +200,7 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
 
       document.querySelector('#game-pane').classList.add('pick-susu');
       console.log("startpick")
-      await displayGameMessage("It seems like your Slot is empty...");
+      await displayGameMessage("It seems like your Bag is empty...");
       await timeout(1500);
       await moveGameMessage();
       await displayGameMessage("Let's find you a new Susuwatari!");
