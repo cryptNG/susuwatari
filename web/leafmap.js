@@ -196,6 +196,13 @@ function updateCachePositions(susus,callback) {
     const div = document.getElementById(susu.tokenId);
     
     if (div) {
+      if(susu.isCarrying||false)
+      {
+        div.classList.add('is-carrying');
+      }else{
+        div.classList.remove('is-carrying');
+      }
+
       L.DomUtil.setPosition(div, position);
 
       if (currentZoom <= 15) {
@@ -225,7 +232,7 @@ function updateCachePositions(susus,callback) {
 
 function getIconSvg(id, width, height)
 {
-  return `<svg id="${id}" width=${width} height=${height} viewBox="-57 -62 120 120"  xmlns="http://www.w3.org/2000/svg"
+  return `<svg id="${id}" width=${width} height=${height} viewBox="-60 -60 120 120"  xmlns="http://www.w3.org/2000/svg"
   xmlns:svg="http://www.w3.org/2000/svg">
   <defs>
    <filter id="drop-shadow-normal" x="-100%" y="-100%" width="400%" height="400%">

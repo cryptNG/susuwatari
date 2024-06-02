@@ -70,6 +70,7 @@ button {
     font-weight: 300;
     font-size: 2em;
     display: inline-block;
+    width: 80dvw;
 }
 
 .locationMessages {
@@ -282,4 +283,25 @@ animation-delay: 4.5s;
 
 .leaflet-cache-pane div{
     position: absolute;
+    z-index: 1;
+}
+
+.leaflet-cache-pane div.is-carrying{
+    z-index: 10000;
+}
+
+.leaflet-cache-pane div svg{
+   
+    position: absolute;
+    top: -100%;
+    right: -100%;
+    left: -100%;
+    bottom: -100%;
+    margin: auto;
+}
+.leaflet-cache-pane div.is-carrying svg{
+
+    animation: spin 5s infinite;
+    animation-timing-function: linear;
+
 }

@@ -52,6 +52,10 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
 
     console.log("Test" + userLatLng, center);
     console.log("aiming susu");
+    const susu = LeaderBoard.susus.find((susu)=>susu.tokenId===tokenId);
+    
+    susu.posCurrent={lat:userPosition[0],lon:userPosition[1]};
+    susu.isCarrying=false;
     const tx = await LibwalletMobileService.dropSusu(tokenId, location);
     window.lastDroppedTokenId = tokenId;
     window.changeState++;
@@ -64,33 +68,18 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
   window.changeState++;
 },false);
 
-    const messagesDiv = document.getElementById('messages');
-    const messagesGameDiv = document.getElementById('gameMessages');
+    
+    
 
   
     function displayMessage(message) {
+      const messagesDiv = document.getElementById('messages');
       messagesDiv.textContent = message;
     }
 
-    let deleteAndType = true;
+    window.deleteAndType = true;
 
-    async function displayGameMessage(message) {
-        if (deleteAndType) {
-            const currentMessage = messagesGameDiv.textContent;
-            for (let i = currentMessage.length; i >= 0; i--) {
-                messagesGameDiv.textContent = currentMessage.substring(0, i);
-                await new Promise(resolve => setTimeout(resolve, 30)); 
-            }
     
-            // Type new message one letter at a time
-            for (let i = 0; i <= message.length; i++) {
-                messagesGameDiv.textContent = message.substring(0, i);
-                await new Promise(resolve => setTimeout(resolve, 30));
-            }
-        } else {
-            messagesGameDiv.textContent = message;
-        }
-    }
 
 
     async function setLoaderComplete() {
@@ -108,691 +97,14 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
             document.querySelector('.gameMessages').classList.add('move-up');
             document.querySelector('.gameMessagesWrapper').classList.add('move-up');
             resolve();
-        }, 4500);
+        }, 2500);
     });
 }
   
 
     const contractAddress = '0xbc62d21a50930b689cd56b31A82d2c882105F04c';
     const jsonRpcUrl = 'https://testnet.cryptng.xyz:8545';
-    const contractAbi =[
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "_contractOwner",
-            "type": "address"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "facetAddress",
-                "type": "address"
-              },
-              {
-                "internalType": "enum IDiamondCut.FacetCutAction",
-                "name": "action",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes4[]",
-                "name": "functionSelectors",
-                "type": "bytes4[]"
-              }
-            ],
-            "internalType": "struct IDiamondCut.FacetCut[]",
-            "name": "_diamondCut",
-            "type": "tuple[]"
-          },
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "initContract",
-                "type": "address"
-              },
-              {
-                "internalType": "bytes",
-                "name": "initData",
-                "type": "bytes"
-              }
-            ],
-            "internalType": "struct Diamond.Initialization[]",
-            "name": "_initializations",
-            "type": "tuple[]"
-          }
-        ],
-        "stateMutability": "payable",
-        "type": "constructor"
-      },
-      {
-        "stateMutability": "payable",
-        "type": "fallback"
-      },
-      {
-        "stateMutability": "payable",
-        "type": "receive"
-      },
-      {
-        "inputs": [],
-        "name": "init",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "originLocation",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "currentLocation",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "destination",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint8",
-            "name": "team",
-            "type": "uint8"
-          },
-          {
-            "indexed": false,
-            "internalType": "string",
-            "name": "message",
-            "type": "string"
-          }
-        ],
-        "name": "DroppedSusu",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "string",
-            "name": "message",
-            "type": "string"
-          },
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint8",
-            "name": "team",
-            "type": "uint8"
-          }
-        ],
-        "name": "MintedSusu",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "location",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "string",
-            "name": "message",
-            "type": "string"
-          },
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "sender",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint8",
-            "name": "team",
-            "type": "uint8"
-          }
-        ],
-        "name": "PickedUpSusu",
-        "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "location",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "destination",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "message",
-            "type": "string"
-          }
-        ],
-        "name": "aimInitialSusu",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "location",
-            "type": "uint256"
-          }
-        ],
-        "name": "dropSusu",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "getAllSusuwataris",
-        "outputs": [
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-              },
-              {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-              }
-            ],
-            "internalType": "struct LibSusuwatari.SusuwatariInfo[]",
-            "name": "",
-            "type": "tuple[]"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "getBaggedSusus",
-        "outputs": [
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "tokenId",
-                "type": "uint256"
-              },
-              {
-                "internalType": "address",
-                "name": "carrier",
-                "type": "address"
-              }
-            ],
-            "internalType": "struct LibSusuwatari.BaggedSusuInfo[]",
-            "name": "",
-            "type": "tuple[]"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "getCurrentState",
-        "outputs": [
-          {
-            "components": [
-              {
-                "internalType": "uint256[]",
-                "name": "ownedTokens",
-                "type": "uint256[]"
-              },
-              {
-                "components": [
-                  {
-                    "internalType": "uint256",
-                    "name": "susuTokenId",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "dropCooldownTime",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "address",
-                    "name": "ownerAddress",
-                    "type": "address"
-                  }
-                ],
-                "internalType": "struct BaggageSlot",
-                "name": "slot",
-                "type": "tuple"
-              },
-              {
-                "internalType": "uint8",
-                "name": "team",
-                "type": "uint8"
-              }
-            ],
-            "internalType": "struct UserState",
-            "name": "",
-            "type": "tuple"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "giveSusuwatari",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint8",
-            "name": "team",
-            "type": "uint8"
-          }
-        ],
-        "name": "registerMe",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "location",
-            "type": "uint256"
-          }
-        ],
-        "name": "tryPickupSusu",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "name": "AssignActivatableAddressToSenderReturn",
-        "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "assignee",
-            "type": "address"
-          }
-        ],
-        "name": "assignActivatableAddressToSender",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "getActivationCodeOfSender",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "getDeviceOwner",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "getRelatedDevices",
-        "outputs": [
-          {
-            "internalType": "address[]",
-            "name": "",
-            "type": "address[]"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "isSenderRegistered",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint8",
-            "name": "team",
-            "type": "uint8"
-          }
-        ],
-        "name": "registerAndAssignMe",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "facetAddress",
-                "type": "address"
-              },
-              {
-                "internalType": "enum IDiamondCut.FacetCutAction",
-                "name": "action",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes4[]",
-                "name": "functionSelectors",
-                "type": "bytes4[]"
-              }
-            ],
-            "indexed": false,
-            "internalType": "struct IDiamondCut.FacetCut[]",
-            "name": "_diamondCut",
-            "type": "tuple[]"
-          },
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "_init",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "internalType": "bytes",
-            "name": "_calldata",
-            "type": "bytes"
-          }
-        ],
-        "name": "DiamondCut",
-        "type": "event"
-      },
-      {
-        "inputs": [
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "facetAddress",
-                "type": "address"
-              },
-              {
-                "internalType": "enum IDiamondCut.FacetCutAction",
-                "name": "action",
-                "type": "uint8"
-              },
-              {
-                "internalType": "bytes4[]",
-                "name": "functionSelectors",
-                "type": "bytes4[]"
-              }
-            ],
-            "internalType": "struct IDiamondCut.FacetCut[]",
-            "name": "_diamondCut",
-            "type": "tuple[]"
-          },
-          {
-            "internalType": "address",
-            "name": "_init",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes",
-            "name": "_calldata",
-            "type": "bytes"
-          }
-        ],
-        "name": "diamondCut",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "previousOwner",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "newOwner",
-            "type": "address"
-          }
-        ],
-        "name": "OwnershipTransferred",
-        "type": "event"
-      },
-      {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "owner_",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "_newOwner",
-            "type": "address"
-          }
-        ],
-        "name": "transferOwnership",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes4",
-            "name": "_functionSelector",
-            "type": "bytes4"
-          }
-        ],
-        "name": "facetAddress",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "facetAddress_",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "facetAddresses",
-        "outputs": [
-          {
-            "internalType": "address[]",
-            "name": "facetAddresses_",
-            "type": "address[]"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "_facet",
-            "type": "address"
-          }
-        ],
-        "name": "facetFunctionSelectors",
-        "outputs": [
-          {
-            "internalType": "bytes4[]",
-            "name": "facetFunctionSelectors_",
-            "type": "bytes4[]"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "facets",
-        "outputs": [
-          {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "facetAddress",
-                "type": "address"
-              },
-              {
-                "internalType": "bytes4[]",
-                "name": "functionSelectors",
-                "type": "bytes4[]"
-              }
-            ],
-            "internalType": "struct IDiamondLoupe.Facet[]",
-            "name": "facets_",
-            "type": "tuple[]"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "bytes4",
-            "name": "_interfaceId",
-            "type": "bytes4"
-          }
-        ],
-        "name": "supportsInterface",
-        "outputs": [
-          {
-            "internalType": "bool",
-            "name": "",
-            "type": "bool"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      }
-    ];
+    
     displayMessage('Setting up Wallet Service...');
 
     console.log('Setting up LibwalletMobileService...')
@@ -837,6 +149,7 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
       window.allSusuwataris = await LibwalletMobileService.getAllSusuwataris();
 
       if(map) map.off('moveend', updateCachePositions);
+      if(map) map.off('move', onMoveNewSusu);
 
     lastChangeState = window.changeState;
     await LibwalletMobileService.getCurrentState();
@@ -856,37 +169,33 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
       await moveGameMessage();
       await timeout(2500);
      
-      await displayGameMessage("Please choose its destination!");
+      await displayGameMessage("Please choose its destination! By dragging the Map.");
 
-      map.on('move', async () => {
-        window.dontPan=true;
-        try {
-          const { points } = await selectedPosition();
-          deleteAndType = false; // Switch to normal text displayer
-          await displayGameMessage(`Potential points: ${points}`);
-          deleteAndType = true; // Switch back to delete and type mode
-        } catch (error) {
-          console.error("Error:", error);
-          // Handle error
-        }
-      });
+      map.on('move',onMoveNewSusu);
 
     }
 
     if(LibwalletMobileService.isCarryingSusu){
       document.querySelector('#game-pane').classList.add('carry-susu');
       console.log("statenew")
-      await timeout(1500);
+      const susus = LeaderBoard.susus;
+      const susu = susus.find((susu)=>susu.tokenId===LibwalletMobileService.currentState.slot.susuTokenId)
+      
+      susu.isCarrying=true;
+      await timeout(500);
       await moveGameMessage();
       await displayGameMessage("You are carrying a Susuwatari. Yay!!!");
-      await timeout(1000);
+      await timeout(500);
       await moveGameMessage();
       await displayGameMessage("Bring it nearer to it's destination to earn Fame Coins.");
+      
+      panToUserLocation();
       
       updateDropPosition();
     }
 
     if(LibwalletMobileService.isPickingSusu){
+
       document.querySelector('#game-pane').classList.add('pick-susu');
       console.log("startpick")
       await displayGameMessage("It seems like your Slot is empty...");
@@ -897,6 +206,8 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
 
       try {
    
+        panToUserLocation();
+
         updatePositionEvent(LeaderBoard.susus);
 
         updateCachePositions(LeaderBoard.susus,showCaches.bind(this));
@@ -966,8 +277,725 @@ async function updateDropPosition(){
   while(window.refresh && LibwalletMobileService.isCarryingSusu){
   
     const susus = LeaderBoard.susus;
-    susus.find((susu)=>susu.tokenId===LibwalletMobileService.currentState.slot.susuTokenId).posCurrent={lat:userPosition[0],lon:userPosition[1]};
+    const susu = susus.find((susu)=>susu.tokenId===LibwalletMobileService.currentState.slot.susuTokenId)
+      
+    susu.posCurrent={lat:userPosition[0],lon:userPosition[1]};
+  
+    
     updateCachePositions(susus,showCaches.bind(this));
     await timeout(100);
   }
 }
+
+async function onMoveNewSusu() {
+  window.requestAnimationFrame(async ()=>{
+    window.dontPan=true;
+    try {
+      const { points } = await selectedPosition();
+      window.deleteAndType = false; // Switch to normal text displayer
+      await displayGameMessage(`Potential points: ${points}`);
+      window.deleteAndType = true; // Switch back to delete and type mode
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error
+    }
+  });
+}
+
+async function displayGameMessage(message) {
+      const messagesGameDiv = document.getElementById('gameMessages');
+        if (window.deleteAndType) {
+            const currentMessage = messagesGameDiv.textContent;
+            for (let i = currentMessage.length; i >= 0; i--) {
+                messagesGameDiv.textContent = currentMessage.substring(0, i);
+                await new Promise(resolve => setTimeout(resolve, 30)); 
+            }
+    
+            // Type new message one letter at a time
+            for (let i = 0; i <= message.length; i++) {
+                messagesGameDiv.textContent = message.substring(0, i);
+                await new Promise(resolve => setTimeout(resolve, 30));
+            }
+        } else {
+            messagesGameDiv.textContent = message;
+        }
+    }
+
+const contractAbi =[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contractOwner",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "facetAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "enum IDiamondCut.FacetCutAction",
+            "name": "action",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes4[]",
+            "name": "functionSelectors",
+            "type": "bytes4[]"
+          }
+        ],
+        "internalType": "struct IDiamondCut.FacetCut[]",
+        "name": "_diamondCut",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "initContract",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes",
+            "name": "initData",
+            "type": "bytes"
+          }
+        ],
+        "internalType": "struct Diamond.Initialization[]",
+        "name": "_initializations",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "constructor"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  },
+  {
+    "inputs": [],
+    "name": "init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "originLocation",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentLocation",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "destination",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "team",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
+    "name": "DroppedSusu",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "team",
+        "type": "uint8"
+      }
+    ],
+    "name": "MintedSusu",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "location",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "team",
+        "type": "uint8"
+      }
+    ],
+    "name": "PickedUpSusu",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "location",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "destination",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
+    "name": "aimInitialSusu",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "location",
+        "type": "uint256"
+      }
+    ],
+    "name": "dropSusu",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllSusuwataris",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct LibSusuwatari.SusuwatariInfo[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getBaggedSusus",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "carrier",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct LibSusuwatari.BaggedSusuInfo[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCurrentState",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256[]",
+            "name": "ownedTokens",
+            "type": "uint256[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "susuTokenId",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "dropCooldownTime",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "ownerAddress",
+                "type": "address"
+              }
+            ],
+            "internalType": "struct BaggageSlot",
+            "name": "slot",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint8",
+            "name": "team",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct UserState",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "giveSusuwatari",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "team",
+        "type": "uint8"
+      }
+    ],
+    "name": "registerMe",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "location",
+        "type": "uint256"
+      }
+    ],
+    "name": "tryPickupSusu",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "AssignActivatableAddressToSenderReturn",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "assignee",
+        "type": "address"
+      }
+    ],
+    "name": "assignActivatableAddressToSender",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getActivationCodeOfSender",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getDeviceOwner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRelatedDevices",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isSenderRegistered",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "team",
+        "type": "uint8"
+      }
+    ],
+    "name": "registerAndAssignMe",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "facetAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "enum IDiamondCut.FacetCutAction",
+            "name": "action",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes4[]",
+            "name": "functionSelectors",
+            "type": "bytes4[]"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IDiamondCut.FacetCut[]",
+        "name": "_diamondCut",
+        "type": "tuple[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_init",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "_calldata",
+        "type": "bytes"
+      }
+    ],
+    "name": "DiamondCut",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "facetAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "enum IDiamondCut.FacetCutAction",
+            "name": "action",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes4[]",
+            "name": "functionSelectors",
+            "type": "bytes4[]"
+          }
+        ],
+        "internalType": "struct IDiamondCut.FacetCut[]",
+        "name": "_diamondCut",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "address",
+        "name": "_init",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_calldata",
+        "type": "bytes"
+      }
+    ],
+    "name": "diamondCut",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "owner_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "_functionSelector",
+        "type": "bytes4"
+      }
+    ],
+    "name": "facetAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "facetAddress_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "facetAddresses",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "facetAddresses_",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_facet",
+        "type": "address"
+      }
+    ],
+    "name": "facetFunctionSelectors",
+    "outputs": [
+      {
+        "internalType": "bytes4[]",
+        "name": "facetFunctionSelectors_",
+        "type": "bytes4[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "facets",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "facetAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes4[]",
+            "name": "functionSelectors",
+            "type": "bytes4[]"
+          }
+        ],
+        "internalType": "struct IDiamondLoupe.Facet[]",
+        "name": "facets_",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "_interfaceId",
+        "type": "bytes4"
+      }
+    ],
+    "name": "supportsInterface",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+];
