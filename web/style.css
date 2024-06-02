@@ -71,6 +71,8 @@ button {
     font-size: 2em;
     display: inline-block;
     width: 80dvw;
+    font-weight: 500;
+    color: #053a67;
 }
 
 .locationMessages {
@@ -173,10 +175,7 @@ button {
 .flip-card.active .drop-susu .newSusu svg {
     opacity: 1;
 }
-
-.flip-card.active .carry-susu .newSusu svg {
-    opacity: 1;
-}
+xa
 
 .flip-card.active .newSusu {
     animation: scale 4s linear forwards;
@@ -242,6 +241,7 @@ button {
     height: 30dvh;
     top: calc(45dvh - 15dvh);
     position: relative;
+    
 }
 
 .flip-card.active .svgTextWrapper {
@@ -313,4 +313,12 @@ animation-delay: 4.5s;
     margin: 1em;
     font-weight: 700;
     text-shadow: 4px 3px 3px #00000045;
+}
+
+.pane{
+    transition: all 1s ease-in-out;
+}
+.pane.pick-susu{
+    background: linear-gradient(to right, #f7797d, #FBD786, #C6FFDD);
+    border-radius: 20px;
 }
