@@ -248,7 +248,7 @@ animation: moveUp 2s forwards;
 animation-delay: 4.5s;
 }
 
-.aim-button {
+.aim-button,.drop-button {
     position: absolute;
     bottom: 0;
     left: calc(50% - 3.5em);
@@ -259,7 +259,7 @@ animation-delay: 4.5s;
     border: 1px solid #000;
     border-radius: 5px;
     cursor: pointer;
-    display: none;
+    display: block;
     bottom: 2dvh;
     background: #5E5DF0;
     border-radius: 999px;
@@ -271,6 +271,10 @@ animation-delay: 4.5s;
 }
 
 .drop-susu .aim-button {
+    opacity: 1;
+}
+
+.carry-susu .drop-button {
     opacity: 1;
 }
 

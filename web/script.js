@@ -40,6 +40,30 @@ document.querySelector('.aim-button').addEventListener('click', async () => {
   window.changeState++;
 },false);
 
+document.querySelector('.drop-button').addEventListener('click', async () => {
+  try {
+    const tokenId = LibwalletMobileService.currentState.slot.susuTokenId;
+
+    // Get the user's current position and selected position
+    const { center, userLatLng } = await selectedPosition();
+ 
+    // Calculate spot IDs for both locations
+    const location = encodeCoordinates({lat:userLatLng[0],lon:userLatLng[1]});
+
+    console.log("Test" + userLatLng, center);
+    console.log("aiming susu");
+    const tx = await LibwalletMobileService.dropSusu(tokenId, location);
+    window.lastDroppedTokenId = tokenId;
+    window.changeState++;
+    console.log("POW susu shot");
+  } catch (err) {
+    console.log("Susu missed...");
+    console.log(err);
+
+  }
+  window.changeState++;
+},false);
+
     const messagesDiv = document.getElementById('messages');
     const messagesGameDiv = document.getElementById('gameMessages');
 
@@ -799,6 +823,7 @@ document.querySelector('.aim-button').addEventListener('click', async () => {
     window.refresh=true;
     window.changeState=0;
     window.dontPan=false;
+    window.lastDroppedTokenId = 0;
     async function loadGame(){
       let lastChangeState = -1;
       while(window.refresh===true){
@@ -832,8 +857,6 @@ document.querySelector('.aim-button').addEventListener('click', async () => {
       await timeout(2500);
      
       await displayGameMessage("Please choose its destination!");
-      document.querySelector('.aim-button').style.display = 'block';
-      
 
       map.on('move', async () => {
         window.dontPan=true;
@@ -916,29 +939,17 @@ panToUserLocation();
 });
 
 showCaches=()=> {
-  let caches = document.querySelectorAll('.inmap-cache');
-  caches.forEach(cache => {
-    cache.classList.remove('hidden');
-    cache.classList.remove('animate-fade-in'); // Remove the animation class
-    
-    // Force a reflow. This is synchronous and will cause a layout
-    void cache.offsetWidth;
-
-    cache.classList.add('animate-fade-in'); // Re-add the animation class
-  });
+  
 }
 
 hideCaches=() =>{
-  let caches = document.querySelectorAll('.inmap-cache');
-  caches.forEach(cache => {
-    cache.classList.add('hidden');
-  });
+  
 }
 
 async function tryPickSusu(){
   while(window.refresh && LibwalletMobileService.isPickingSusu){
     for(let i=0;i<LeaderBoard.susus.length;i++){
-      if(LeaderBoard.susus[i].currentSpotId === userSpotId && LeaderBoard.susus[i].ownerAddress !== LibwalletMobileService.address){
+      if(LeaderBoard.susus[i].currentSpotId === userSpotId && LeaderBoard.susus[i].ownerAddress !== LibwalletMobileService.address && window.lastDroppedTokenId !==LeaderBoard.susus[i].tokenId){
         console.log('try pick susu:'+LeaderBoard.susus[i].tokenId);
         await LibwalletMobileService.tryPickupSusu(LeaderBoard.susus[i].tokenId);
         window.changeState++;
@@ -953,11 +964,10 @@ async function tryPickSusu(){
 async function updateDropPosition(){
   updatePositionEvent(LeaderBoard.susus);
   while(window.refresh && LibwalletMobileService.isCarryingSusu){
-    panToUserLocation();
-    
+  
     const susus = LeaderBoard.susus;
     susus.find((susu)=>susu.tokenId===LibwalletMobileService.currentState.slot.susuTokenId).posCurrent={lat:userPosition[0],lon:userPosition[1]};
-    updateCachePositions(susus);
+    updateCachePositions(susus,showCaches.bind(this));
     await timeout(100);
   }
 }

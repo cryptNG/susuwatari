@@ -45,7 +45,7 @@ const LeaderBoard = {
     async autoRefreshDropEvents (){
 
         let lastFromBlock=0;
-        let lastToBlock=0;
+        let lastToBlock=6950;
 
         while(this.refresh){
 

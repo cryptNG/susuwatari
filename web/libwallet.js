@@ -54,6 +54,18 @@ let LibwalletMobileService = {
     }
   },
 
+  async dropSusu(tokenId, location) {
+    try {
+      const tx = await this.contract.dropSusu(tokenId, location);
+      await tx.wait();
+      console.log('Transaction completed:', tx);
+      return tx;
+    } catch (err) {
+      console.error('Error aiming initial susu:', err);
+      throw err;
+    }
+  },
+
   async makeNewSusu() {
     try {
       const tx = await this.contract.giveSusuwatari();
