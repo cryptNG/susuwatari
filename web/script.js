@@ -189,7 +189,7 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
       await displayGameMessage("You are carrying a Susuwatari. Yay!!!");
       await timeout(500);
       await moveGameMessage();
-      await displayGameMessage("Bring it nearer to it's destination to earn Fame Coins.");
+      await displayGameMessage("Bring it nearer to it's destination to earn Fame.");
       
       panToUserLocation();
 
@@ -266,7 +266,7 @@ async function tryPickSusu(){
         console.log('try pick susu:'+LeaderBoard.susus[i].tokenId);
         await LibwalletMobileService.tryPickupSusu(LeaderBoard.susus[i].tokenId);
         window.changeState++;
-        await timeout(1000);
+        await timeout(5000);
         break;
       }
       

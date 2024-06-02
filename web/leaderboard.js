@@ -58,6 +58,7 @@ const LeaderBoard = {
 
         while(this.refresh){
 
+            let currentEventCount = this.events.length;
             if(LibwalletMobileService.isLoaded){
                 try{
                     const eventFilter = LibwalletMobileService.contract.filters.DroppedSusu();
@@ -98,6 +99,9 @@ const LeaderBoard = {
                     }
                 }catch(e){
                     console.error(e);
+                }
+                if(this.events.length>currentEventCount){
+                    window.allSusuwataris = await LibwalletMobileService.getAllSusuwataris();
                 }
             }
 
