@@ -31,8 +31,11 @@ const LeaderBoard = {
     get susus(){
  
         const sususWithOwner = [...this.tokens.values()].map((susu)=>{
+            susu.isCarrying =false;
             try{
-            susu.ownerAddress =window.allSusuwataris.find((_susu)=>susu.tokenId===_susu.tokenId).owner;
+                const _susu=window.allSusuwataris.find((_susu)=>susu.tokenId===_susu.tokenId);
+                susu.ownerAddress =_susu.owner;
+                susu.isCarrying =_susu.isCarrying;
             }catch(e){
                 console.error(e);
             }
@@ -42,7 +45,9 @@ const LeaderBoard = {
             susu.currentSpotId=getSpotIdForCoordinates(susu.posCurrent);
             return susu;
   
-          })
+          }).filter((susu)=>{
+            return (susu.isCarrying === false || susu.tokenId === LibwalletMobileService.currentState?.slot?.susuTokenId) && susu.origin > 10n;
+        });
 
         return sususWithOwner;
     },

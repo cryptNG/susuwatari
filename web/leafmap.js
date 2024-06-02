@@ -196,7 +196,7 @@ function updateCachePositions(susus,callback) {
     const div = document.getElementById(susu.tokenId);
     
     if (div) {
-      if(susu.isCarrying||false)
+      if(susu.isMeCarrying||false)
       {
         div.classList.add('is-carrying');
       }else{

@@ -55,7 +55,7 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
     const susu = LeaderBoard.susus.find((susu)=>susu.tokenId===tokenId);
     
     susu.posCurrent={lat:userPosition[0],lon:userPosition[1]};
-    susu.isCarrying=false;
+    susu.isMeCarrying=false;
     const tx = await LibwalletMobileService.dropSusu(tokenId, location);
     window.lastDroppedTokenId = tokenId;
     window.changeState++;
@@ -183,7 +183,7 @@ document.querySelector('.drop-button').addEventListener('click', async () => {
       const susus = LeaderBoard.susus;
       const susu = susus.find((susu)=>susu.tokenId===LibwalletMobileService.currentState.slot.susuTokenId)
       
-      susu.isCarrying=true;
+      susu.isMeCarrying=true;
       await timeout(500);
       await moveGameMessage();
       await displayGameMessage("You are carrying a Susuwatari. Yay!!!");
@@ -323,7 +323,7 @@ async function displayGameMessage(message) {
         }
     }
 
-const contractAbi =[
+const contractAbi = [
   {
     "inputs": [
       {
@@ -567,6 +567,11 @@ const contractAbi =[
             "internalType": "address",
             "name": "owner",
             "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isCarrying",
+            "type": "bool"
           }
         ],
         "internalType": "struct LibSusuwatari.SusuwatariInfo[]",
