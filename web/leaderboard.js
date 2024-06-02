@@ -31,7 +31,11 @@ const LeaderBoard = {
     get susus(){
  
         const sususWithOwner = [...this.tokens.values()].map((susu)=>{
+            try{
             susu.ownerAddress =window.allSusuwataris.find((_susu)=>susu.tokenId===_susu.tokenId).owner;
+            }catch(e){
+                console.error(e);
+            }
             susu.posOrigin = decodeCoordinates(susu.origin);
             susu.posCurrent = decodeCoordinates(susu.current);
             susu.posDestination = decodeCoordinates(susu.destination);
