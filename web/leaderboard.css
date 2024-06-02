@@ -17,7 +17,7 @@ nav {
 }
 
 nav span {
-    padding: 0.7dvh 1em 1.3dvh 1em;
+    padding: 0.7dvh 0.5em 1.3dvh 0.5em;
     height: 2dvh;
     background-color: white;
     border-radius: 10px 10px 0 0;
