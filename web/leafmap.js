@@ -52,7 +52,7 @@ const updatePositionPeriodically = async () => {
               navigator.geolocation.getCurrentPosition((position) => {
                   userPosition = [position.coords.latitude, position.coords.longitude];
                   userSpotId=getSpotIdForCoordinates({lat:userPosition[0],lon:userPosition[1]});
-                  map.panTo(userPosition);
+                  if(!window.dontPan) map.panTo(userPosition);
 
               });
           }

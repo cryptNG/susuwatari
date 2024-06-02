@@ -250,7 +250,7 @@ animation-delay: 4.5s;
 
 .aim-button,.drop-button {
     position: absolute;
-    bottom: 0;
+  
     left: calc(50% - 3.5em);
     width: 7em;
     z-index: 1000;
@@ -260,7 +260,7 @@ animation-delay: 4.5s;
     border-radius: 5px;
     cursor: pointer;
     display: block;
-    bottom: 2dvh;
+    bottom: -2dvh;
     background: #5E5DF0;
     border-radius: 999px;
     box-shadow: #5E5DF0 0 10px 20px -10px;
@@ -272,10 +272,12 @@ animation-delay: 4.5s;
 
 .drop-susu .aim-button {
     opacity: 1;
+    bottom: 2dvh;
 }
 
 .carry-susu .drop-button {
     opacity: 1;
+    bottom: 2dvh;
 }
 
 .leaflet-cache-pane div{
